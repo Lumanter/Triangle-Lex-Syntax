@@ -59,7 +59,8 @@ public class Main extends javax.swing.JFrame {
         initComponents();
         setSize(640, 480);
         setVisible(true);
-        directory = new File(".");
+        directory = new File("./examples/");  // for testing!!!!!!!!!!!!!!!
+        openMenuItemActionPerformed(null);  // for testing!!!!!!!!!!!!!!!
     }
     
     /**
