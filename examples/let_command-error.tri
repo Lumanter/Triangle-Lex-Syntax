@@ -1,0 +1,6 @@
+let
+ var i: Integer
+in  
+begin ! begin was removed
+ i:= 1;
+end;
