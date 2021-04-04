@@ -1,5 +1,5 @@
 let
  var i: Integer
 in
- i:= 1
+
 end
