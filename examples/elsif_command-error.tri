@@ -1,0 +1,6 @@
+if (n = 1) then 
+ a := 1
+elsif (n = 2) ! lacks then command
+else
+ d := 5
+end

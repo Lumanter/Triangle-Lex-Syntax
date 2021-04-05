@@ -32,8 +32,11 @@ import Triangle.AbstractSyntaxTrees.ConstDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstFormalParameter;
 import Triangle.AbstractSyntaxTrees.Declaration;
 import Triangle.AbstractSyntaxTrees.DotVname;
+import Triangle.AbstractSyntaxTrees.Elsif;
+import Triangle.AbstractSyntaxTrees.ElsifSequence;
 import Triangle.AbstractSyntaxTrees.EmptyActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.EmptyCommand;
+import Triangle.AbstractSyntaxTrees.EmptyElsifSequence;
 import Triangle.AbstractSyntaxTrees.EmptyFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.Expression;
 import Triangle.AbstractSyntaxTrees.FieldTypeDenoter;
@@ -51,6 +54,7 @@ import Triangle.AbstractSyntaxTrees.LetCommand;
 import Triangle.AbstractSyntaxTrees.LetExpression;
 import Triangle.AbstractSyntaxTrees.MultipleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleArrayAggregate;
+import Triangle.AbstractSyntaxTrees.MultipleElsifSequence;
 import Triangle.AbstractSyntaxTrees.MultipleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.MultipleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleRecordAggregate;
@@ -68,6 +72,7 @@ import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SimpleVname;
 import Triangle.AbstractSyntaxTrees.SingleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleArrayAggregate;
+import Triangle.AbstractSyntaxTrees.SingleElsifSequence;
 import Triangle.AbstractSyntaxTrees.SingleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
@@ -264,6 +269,7 @@ public class Parser {
     return commandAST;
   }
 
+  
   Command parseSingleCommand() throws SyntaxError {
     Command commandAST = null; // in case there's a syntactic error
 
@@ -305,17 +311,20 @@ public class Parser {
       }
       break;
 
-    case Token.IF:
+    case Token.IF:  // if Expression then Command (elsif Expression then Command)* else Command end
       {
         acceptIt();
-        Expression eAST = parseExpression();
+        Expression ifConditionAST = parseExpression();
         accept(Token.THEN);
-        Command c1AST = parseSingleCommand();
+        Command ifCommandAST = parseCommand();
+        ElsifSequence elsifAST = parseElsifSequence(); 
         accept(Token.ELSE);
-        Command c2AST = parseSingleCommand();
+        Command elseCommandAST = parseSingleCommand();
+        accept(Token.END);
         finish(commandPos);
-        commandAST = new IfCommand(eAST, c1AST, c2AST, commandPos);
-      }
+        commandAST = new IfCommand(ifConditionAST, ifCommandAST, elsifAST, elseCommandAST, commandPos);
+  
+    }
       break;
 
     case Token.WHILE:
@@ -347,6 +356,73 @@ public class Parser {
     return commandAST;
   }
 
+///////////////////////////////////////////////////////////////////////////////
+//
+// ELSIF
+//
+///////////////////////////////////////////////////////////////////////////////
+  /**
+   * Parses an elsif sequence, can be empty.
+   * @return Elsif sequence AST
+   * @throws SyntaxError 
+   */
+  ElsifSequence parseElsifSequence() throws SyntaxError {
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    if (currentToken.kind == Token.ELSE) {
+      finish(pos);
+      return new EmptyElsifSequence(pos);
+    } else {
+      return parseProperElsifSequence();
+    }
+  }
+  
+  
+  /**
+   * Parses a proper elsif sequence, can be a single elsif expression or a chain of multiple ones.
+   * @return Elsif sequence AST
+   * @throws SyntaxError 
+   */
+  ElsifSequence parseProperElsifSequence() throws SyntaxError {
+    ElsifSequence sequenceAST = null;  // for syntax error case
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    Elsif elsifAST = parseElsif();
+    if (currentToken.kind == Token.ELSIF) {
+      ElsifSequence chainedSequenceAST = parseProperElsifSequence();
+      finish(pos);
+      sequenceAST = new MultipleElsifSequence(elsifAST, chainedSequenceAST,pos);
+
+    } else {
+      finish(pos);
+      sequenceAST = new SingleElsifSequence(elsifAST, pos);
+    }
+    return sequenceAST;
+  }
+  
+  
+  /**
+   * Parses a elsif expression.
+   * @return Elsif AST
+   * @throws SyntaxError 
+   */
+  Elsif parseElsif() throws SyntaxError {
+    accept(Token.ELSIF);
+    
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    Expression conditionAST = parseExpression();
+    accept(Token.THEN);
+    Command commandAST = parseCommand();
+    
+    finish(pos);
+    return new Elsif(conditionAST, commandAST, pos);
+  }
+  
+  
 ///////////////////////////////////////////////////////////////////////////////
 //
 // EXPRESSIONS
@@ -798,6 +874,7 @@ public class Parser {
     return actualsAST;
   }
 
+  
   ActualParameterSequence parseProperActualParameterSequence() throws SyntaxError {
     ActualParameterSequence actualsAST = null; // in case there's a syntactic error
 
@@ -818,6 +895,7 @@ public class Parser {
     return actualsAST;
   }
 
+  
   ActualParameter parseActualParameter() throws SyntaxError {
     ActualParameter actualAST = null; // in case there's a syntactic error
 
