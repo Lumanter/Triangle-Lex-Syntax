@@ -24,6 +24,21 @@ import Triangle.AbstractSyntaxTrees.AssignCommand;
 import Triangle.AbstractSyntaxTrees.BinaryExpression;
 import Triangle.AbstractSyntaxTrees.CallCommand;
 import Triangle.AbstractSyntaxTrees.CallExpression;
+import Triangle.AbstractSyntaxTrees.Case;
+import Triangle.AbstractSyntaxTrees.CaseCommand;
+import Triangle.AbstractSyntaxTrees.CaseLiteral;
+import Triangle.AbstractSyntaxTrees.CaseLiteralCharacter;
+import Triangle.AbstractSyntaxTrees.CaseLiteralInteger;
+import Triangle.AbstractSyntaxTrees.CaseLiteralsSequence;
+import Triangle.AbstractSyntaxTrees.CaseLiteralsSequenceMultiple;
+import Triangle.AbstractSyntaxTrees.CaseLiteralsSequenceSingle;
+import Triangle.AbstractSyntaxTrees.CaseRange;
+import Triangle.AbstractSyntaxTrees.CaseRangeOne;
+import Triangle.AbstractSyntaxTrees.CaseRangeTwo;
+import Triangle.AbstractSyntaxTrees.CaseSequence;
+import Triangle.AbstractSyntaxTrees.CaseSequenceMultiple;
+import Triangle.AbstractSyntaxTrees.CaseSequenceSingle;
+import Triangle.AbstractSyntaxTrees.Cases;
 import Triangle.AbstractSyntaxTrees.CharacterExpression;
 import Triangle.AbstractSyntaxTrees.CharacterLiteral;
 import Triangle.AbstractSyntaxTrees.Command;
@@ -355,6 +370,13 @@ public class Parser {
         commandAST = new WhileCommand(eAST, cAST, commandPos);
       }
       break;
+     
+    case Token.CHOOSE:
+      {
+        acceptIt();
+        commandAST = parseChooseCommand();
+      }
+      break;
 
     case Token.NOTHING:
      {
@@ -375,6 +397,172 @@ public class Parser {
   }
   // </editor-fold> 
 
+///////////////////////////////////////////////////////////////////////////////
+//
+// CHOOSE
+//
+///////////////////////////////////////////////////////////////////////////////
+// <editor-fold defaultstate="collapsed" desc=" Choose "> 
+  /**
+   * Parses a choose command.
+   * @return choose command ast
+   * @throws SyntaxError 
+   */
+  CaseCommand parseChooseCommand() throws SyntaxError {  // Expression from Cases end 
+    CaseCommand ast = null;
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    Expression expressionAST = parseExpression();
+    accept(Token.FROM);
+    Cases casesAST = parseCases();
+    accept(Token.END);
+    
+    finish(pos);
+    ast = new CaseCommand(expressionAST, casesAST, pos);
+    return ast;
+  }
+  
+  
+  /**
+   * Parses a cases ast node, case sequence and else command
+   * @return cases ast
+   * @throws SyntaxError 
+   */
+  Cases parseCases() throws SyntaxError {
+    Cases ast = null;
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    CaseSequence caseSequenceAST = parseCaseSequence();
+    Command elseCommandAST = new EmptyCommand(pos);
+    if (currentToken.kind == Token.ELSE) {
+        acceptIt();
+        elseCommandAST = parseCommand();
+    }
+    
+    finish(pos);
+    ast = new Cases(caseSequenceAST, elseCommandAST, pos);
+    return ast;
+  }
+  
+  
+  /**
+   * Parses a case sequence
+   * @return case sequence ast
+   * @throws SyntaxError 
+   */
+  CaseSequence parseCaseSequence() throws SyntaxError {  // Case+
+    CaseSequence sequenceAST = null;  // for syntax error case
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    Case caseAST = parseCase();
+    if (currentToken.kind == Token.WHEN) {
+      CaseSequence chainedSequenceAST = parseCaseSequence();
+      finish(pos);
+      sequenceAST = new CaseSequenceMultiple(caseAST, chainedSequenceAST,pos);
+
+    } else {
+      finish(pos);
+      sequenceAST = new CaseSequenceSingle(caseAST, pos);
+    }
+    return sequenceAST;
+  }
+  
+  /**
+   * Parses a case
+   * @return case ast
+   * @throws SyntaxError 
+   */
+  Case parseCase() throws SyntaxError {  // when Case-Literals then Command 
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    accept(Token.WHEN);
+    CaseLiteralsSequence caseLiteralsAST = parseCaseLiteralsSequence();
+    accept(Token.THEN);
+    Command commandAST = parseCommand();
+    
+    finish(pos);
+    return new Case(caseLiteralsAST, commandAST, pos);
+  }
+  
+  
+  /**
+   * Parses a sequence of case ranges
+   * @return case range sequence ast
+   * @throws SyntaxError 
+   */
+  CaseLiteralsSequence parseCaseLiteralsSequence() throws SyntaxError {  // Case-Range (| Case-Range)* 
+    CaseLiteralsSequence sequenceAST = null;  // for syntax error case
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    CaseRange caseRangeAST = parseCaseRange();
+    if (currentToken.kind == Token.OR) {
+      acceptIt();
+      CaseLiteralsSequence chainedSequenceAST = parseCaseLiteralsSequence();
+      finish(pos);
+      sequenceAST = new CaseLiteralsSequenceMultiple(caseRangeAST, chainedSequenceAST,pos);
+
+    } else {
+      finish(pos);
+      sequenceAST = new CaseLiteralsSequenceSingle(caseRangeAST, pos);
+    }
+    return sequenceAST;
+  }
+  
+  
+  /**
+   * Parses a case range with one or two literals.
+   * @return case range ast
+   * @throws SyntaxError 
+   */
+  CaseRange parseCaseRange() throws SyntaxError {  // Case-Literal [.. Case-Literal] 
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    CaseLiteral fromAST = parseCaseLiteral();
+    if (currentToken.kind == Token.TWODOTS) {
+        acceptIt();
+        CaseLiteral toAST = parseCaseLiteral();
+        finish(pos);
+        return new CaseRangeTwo(fromAST, toAST, pos);
+    } else {
+        finish(pos);
+        return new CaseRangeOne(fromAST, pos);
+    }
+  }
+  
+    
+  /**
+   * Parses a case literal.
+   * @return case literal ast
+   * @throws SyntaxError 
+   */
+  CaseLiteral parseCaseLiteral() throws SyntaxError {  // Integer-Literal | Character-Literal
+    CaseLiteral ast = null;  // for syntax errors
+    
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    if (currentToken.kind == Token.INTLITERAL) {
+        IntegerLiteral intAST = parseIntegerLiteral();
+        finish(pos);
+        ast = new CaseLiteralInteger(intAST, pos);
+    } else if (currentToken.kind == Token.CHARLITERAL) {
+        CharacterLiteral charAST = parseCharacterLiteral();
+        finish(pos);
+        ast = new CaseLiteralCharacter(charAST, pos);
+    } else {
+        syntacticError("\"%\" cannot start an case literal (int or char)", currentToken.spelling);
+    }
+    return ast;
+  } 
+  
+// </editor-fold>   
+  
 ///////////////////////////////////////////////////////////////////////////////
 //
 // LOOPS

@@ -37,6 +37,19 @@ public interface Visitor {
   public abstract Object visitLoopPreDoCommand(LoopPreDoCommand ast, Object o);
   public abstract Object visitLoopForCommand(LoopForCommand ast, Object o);
   
+  // Choose 
+  public abstract Object visitCaseLiteralCharacter(CaseLiteralCharacter ast, Object o);
+  public abstract Object visitCaseLiteralInteger(CaseLiteralInteger ast, Object o);
+  public abstract Object visitCaseRangeOne(CaseRangeOne ast, Object o);
+  public abstract Object visitCaseRangeTwo(CaseRangeTwo ast, Object o);
+  public abstract Object visitCaseLiteralsSequenceSingle(CaseLiteralsSequenceSingle ast, Object o);
+  public abstract Object visitCaseLiteralsSequenceMultiple(CaseLiteralsSequenceMultiple ast, Object o);
+  public abstract Object visitCase(Case ast, Object o);
+  public abstract Object visitCaseSequenceSingle(CaseSequenceSingle ast, Object o);
+  public abstract Object visitCaseSequenceMultiple(CaseSequenceMultiple ast, Object o);
+  public abstract Object visitCases(Cases ast, Object o);
+  public abstract Object visitCaseCommand(CaseCommand ast, Object o);
+  
   
   // Expressions
   public abstract Object visitArrayExpression(ArrayExpression ast, Object o);

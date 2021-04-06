@@ -14,6 +14,17 @@ import Triangle.AbstractSyntaxTrees.BinaryOperatorDeclaration;
 import Triangle.AbstractSyntaxTrees.BoolTypeDenoter;
 import Triangle.AbstractSyntaxTrees.CallCommand;
 import Triangle.AbstractSyntaxTrees.CallExpression;
+import Triangle.AbstractSyntaxTrees.Case;
+import Triangle.AbstractSyntaxTrees.CaseCommand;
+import Triangle.AbstractSyntaxTrees.CaseLiteralCharacter;
+import Triangle.AbstractSyntaxTrees.CaseLiteralInteger;
+import Triangle.AbstractSyntaxTrees.CaseLiteralsSequenceMultiple;
+import Triangle.AbstractSyntaxTrees.CaseLiteralsSequenceSingle;
+import Triangle.AbstractSyntaxTrees.CaseRangeOne;
+import Triangle.AbstractSyntaxTrees.CaseRangeTwo;
+import Triangle.AbstractSyntaxTrees.CaseSequenceMultiple;
+import Triangle.AbstractSyntaxTrees.CaseSequenceSingle;
+import Triangle.AbstractSyntaxTrees.Cases;
 import Triangle.AbstractSyntaxTrees.CharTypeDenoter;
 import Triangle.AbstractSyntaxTrees.CharacterExpression;
 import Triangle.AbstractSyntaxTrees.CharacterLiteral;
@@ -154,6 +165,50 @@ public class TreeVisitor implements Visitor {
     
     public Object visitLoopForCommand(LoopForCommand ast, Object obj) {
         return(createQuaternary("Loop For", ast.identifier, ast.from, ast.to, ast.command));
+    }
+    
+    public Object visitCaseLiteralCharacter(CaseLiteralCharacter ast, Object obj) {
+        return(createUnary("Case Literal Char", ast.charLiteral));
+    }
+    
+    public Object visitCaseLiteralInteger(CaseLiteralInteger ast, Object obj) {
+        return(createUnary("Case Literal Int", ast.intLiteral));
+    }
+    
+    public Object visitCaseRangeOne(CaseRangeOne ast, Object obj) {
+        return(createUnary("Case Range One", ast.caseLiteral));
+    }
+    
+    public Object visitCaseRangeTwo(CaseRangeTwo ast, Object obj) {
+        return(createBinary("Case Range Two", ast.from, ast.to));
+    }
+    
+    public Object visitCaseLiteralsSequenceSingle(CaseLiteralsSequenceSingle ast, Object obj) {
+        return(createUnary("Single Case Literal", ast.caseRange));
+    }
+    
+    public Object visitCaseLiteralsSequenceMultiple(CaseLiteralsSequenceMultiple ast, Object obj) {
+        return(createBinary("Multiple Case Literals", ast.caseRange, ast.sequence));
+    }
+    
+    public Object visitCase(Case ast, Object obj) {
+        return(createBinary("Case", ast.caseLiterals, ast.command));
+    }
+    
+    public Object visitCaseSequenceSingle(CaseSequenceSingle ast, Object obj) {
+        return(createUnary("Single Case", ast.caseAST));
+    }
+    
+    public Object visitCaseSequenceMultiple(CaseSequenceMultiple ast, Object obj) {
+        return(createBinary("Multiple Cases", ast.caseAST, ast.sequence));
+    }
+    
+    public Object visitCases(Cases ast, Object obj) {
+        return(createBinary("Cases", ast.caseSequence, ast.elseCommand));
+    }
+    
+    public Object visitCaseCommand(CaseCommand ast, Object obj) {
+        return(createBinary("Case Command", ast.expression, ast.cases));
     }
     // </editor-fold>
     
