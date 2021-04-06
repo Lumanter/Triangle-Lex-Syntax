@@ -1,0 +1,4 @@
+loop do
+ n := n + 1
+while (n < 10)
+end

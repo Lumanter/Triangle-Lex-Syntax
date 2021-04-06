@@ -39,6 +39,10 @@ import Triangle.AbstractSyntaxTrees.IntegerExpression;
 import Triangle.AbstractSyntaxTrees.IntegerLiteral;
 import Triangle.AbstractSyntaxTrees.LetCommand;
 import Triangle.AbstractSyntaxTrees.LetExpression;
+import Triangle.AbstractSyntaxTrees.LoopConditional;
+import Triangle.AbstractSyntaxTrees.LoopForCommand;
+import Triangle.AbstractSyntaxTrees.LoopPostDoCommand;
+import Triangle.AbstractSyntaxTrees.LoopPreDoCommand;
 import Triangle.AbstractSyntaxTrees.MultipleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleArrayAggregate;
 import Triangle.AbstractSyntaxTrees.MultipleElsifSequence;
@@ -134,6 +138,22 @@ public class TreeVisitor implements Visitor {
     
     public Object visitMultipleElsifSequence(MultipleElsifSequence ast, Object obj) {
         return(createBinary("Multiple Elsif", ast.E, ast.ES));
+    }
+    
+    public Object visitLoopConditional(LoopConditional ast, Object obj) {
+        return(createNullary(ast.spelling));
+    }
+    
+    public Object visitLoopPostDoCommand(LoopPostDoCommand ast, Object obj) {
+        return(createTernary("Loop Post Do", ast.LC, ast.E, ast.C));
+    }
+    
+    public Object visitLoopPreDoCommand(LoopPreDoCommand ast, Object obj) {
+        return(createTernary("Loop Pre Do", ast.C, ast.LC, ast.E));
+    }
+    
+    public Object visitLoopForCommand(LoopForCommand ast, Object obj) {
+        return(createQuaternary("Loop For", ast.identifier, ast.from, ast.to, ast.command));
     }
     // </editor-fold>
     

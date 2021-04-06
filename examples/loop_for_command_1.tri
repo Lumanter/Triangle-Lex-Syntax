@@ -1,0 +1,4 @@
+loop for n from 0 to 5 
+do  ! option (do Command end)
+ putint(n) 
+end

@@ -25,11 +25,19 @@ public interface Visitor {
   public abstract Object visitSequentialCommand(SequentialCommand ast, Object o);
   public abstract Object visitWhileCommand(WhileCommand ast, Object o);
 
+  // Elsif
   public abstract Object visitElsif(Elsif ast, Object o);
   public abstract Object visitEmptyElsifSequence(EmptyElsifSequence ast, Object o);
   public abstract Object visitSingleElsifSequence(SingleElsifSequence ast, Object o);
   public abstract Object visitMultipleElsifSequence(MultipleElsifSequence ast, Object o);
 
+  // Loops
+  public abstract Object visitLoopConditional(LoopConditional ast, Object o);
+  public abstract Object visitLoopPostDoCommand(LoopPostDoCommand ast, Object o);
+  public abstract Object visitLoopPreDoCommand(LoopPreDoCommand ast, Object o);
+  public abstract Object visitLoopForCommand(LoopForCommand ast, Object o);
+  
+  
   // Expressions
   public abstract Object visitArrayExpression(ArrayExpression ast, Object o);
   public abstract Object visitBinaryExpression(BinaryExpression ast, Object o);

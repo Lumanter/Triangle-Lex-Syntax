@@ -52,6 +52,10 @@ import Triangle.AbstractSyntaxTrees.IntegerExpression;
 import Triangle.AbstractSyntaxTrees.IntegerLiteral;
 import Triangle.AbstractSyntaxTrees.LetCommand;
 import Triangle.AbstractSyntaxTrees.LetExpression;
+import Triangle.AbstractSyntaxTrees.LoopConditional;
+import Triangle.AbstractSyntaxTrees.LoopForCommand;
+import Triangle.AbstractSyntaxTrees.LoopPostDoCommand;
+import Triangle.AbstractSyntaxTrees.LoopPreDoCommand;
 import Triangle.AbstractSyntaxTrees.MultipleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleArrayAggregate;
 import Triangle.AbstractSyntaxTrees.MultipleElsifSequence;
@@ -171,7 +175,7 @@ public class Parser {
 // LITERALS
 //
 ///////////////////////////////////////////////////////////////////////////////
-
+  // <editor-fold defaultstate="collapsed" desc=" Literals ">  
 // parseIntegerLiteral parses an integer-literal, and constructs
 // a leaf AST to represent it.
 
@@ -243,13 +247,14 @@ public class Parser {
     }
     return O;
   }
-
+  // </editor-fold> 
+  
 ///////////////////////////////////////////////////////////////////////////////
 //
 // COMMANDS
 //
 ///////////////////////////////////////////////////////////////////////////////
-
+  // <editor-fold defaultstate="collapsed" desc=" Commands ">  
 // parseCommand parses the command, and constructs an AST
 // to represent its phrase structure.
 
@@ -324,7 +329,20 @@ public class Parser {
         finish(commandPos);
         commandAST = new IfCommand(ifConditionAST, ifCommandAST, elsifAST, elseCommandAST, commandPos);
   
-    }
+      }
+      break;
+    
+    case Token.LOOP:  // Loop-Pre-Do | Loop-For | Loop-Post-Do
+      {
+        acceptIt();
+        if (currentToken.kind == Token.DO) {
+            commandAST = parseLoopPreDoCommand();
+        } else if (currentToken.kind == Token.FOR) {
+            commandAST = parseLoopForCommand();
+        } else {
+            commandAST = parseLoopPostDoCommand();
+        }
+      }
       break;
 
     case Token.WHILE:
@@ -355,12 +373,108 @@ public class Parser {
 
     return commandAST;
   }
+  // </editor-fold> 
 
+///////////////////////////////////////////////////////////////////////////////
+//
+// LOOPS
+//
+///////////////////////////////////////////////////////////////////////////////
+// <editor-fold defaultstate="collapsed" desc=" Loops "> 
+  /**
+   * Parses a loop pre do command.
+   * @return loop pre do command AST
+   * @throws SyntaxError 
+   */
+  LoopPreDoCommand parseLoopPreDoCommand() throws SyntaxError {  // do Command Loop-Conditional Expression end
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    accept(Token.DO);
+    Command command = parseCommand();
+    LoopConditional conditional = parseLoopConditional();
+    Expression expression = parseExpression();
+    accept(Token.END);
+    
+    finish(pos);
+    return new LoopPreDoCommand(command, conditional, expression, pos);
+  }
+  
+  
+  /**
+   * Parses a loop post do command.
+   * @return loop post do command AST
+   * @throws SyntaxError 
+   */
+  LoopPostDoCommand parseLoopPostDoCommand() throws SyntaxError {  // Loop-Conditional Expression do Command end
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    LoopConditional conditional = parseLoopConditional();
+    Expression expression = parseExpression();
+    accept(Token.DO);
+    Command command = parseCommand();
+    accept(Token.END);
+    
+    finish(pos);
+    return new LoopPostDoCommand(conditional, expression, command, pos);
+  }
+  
+  
+  /**
+   * Parses a loop for command.
+   * @return loop for command AST
+   * @throws SyntaxError 
+   */
+  LoopForCommand parseLoopForCommand() throws SyntaxError {  // for Identifier from Expression to Expression (do Command end | Loop-Post-Do)
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    accept(Token.FOR);
+    Identifier identifier = parseIdentifier();
+    accept(Token.FROM);
+    Expression from = parseExpression();
+    accept(Token.TO);
+    Expression to = parseExpression();
+    Command command;
+    if (currentToken.kind == Token.DO) {
+        acceptIt();
+        command = parseCommand();
+        accept(Token.END);
+    } else {
+        command = parseLoopPostDoCommand();
+    }
+    
+    finish(pos);
+    return new LoopForCommand(identifier, from, to, command, pos);
+  }
+  
+  
+  /**
+   * Parses a loop conditional, while or until.
+   * @return loop conditional AST
+   * @throws SyntaxError 
+   */
+  LoopConditional parseLoopConditional() throws SyntaxError {
+    LoopConditional ast = null;
+    if (currentToken.kind == Token.WHILE || currentToken.kind == Token.UNTIL) {
+        previousTokenPosition = currentToken.position;
+        String spelling = currentToken.spelling;
+        ast = new LoopConditional(spelling, previousTokenPosition);
+        currentToken = lexicalAnalyser.scan();
+    } else {
+        syntacticError("while or until expected here", "");
+    }
+    return ast;
+  }
+// </editor-fold> 
+  
 ///////////////////////////////////////////////////////////////////////////////
 //
 // ELSIF
 //
 ///////////////////////////////////////////////////////////////////////////////
+  // <editor-fold defaultstate="collapsed" desc=" Elsif ">   
   /**
    * Parses an elsif sequence, can be empty.
    * @return Elsif sequence AST
@@ -421,6 +535,7 @@ public class Parser {
     finish(pos);
     return new Elsif(conditionAST, commandAST, pos);
   }
+  // </editor-fold> 
   
   
 ///////////////////////////////////////////////////////////////////////////////
@@ -428,7 +543,7 @@ public class Parser {
 // EXPRESSIONS
 //
 ///////////////////////////////////////////////////////////////////////////////
-
+  // <editor-fold defaultstate="collapsed" desc=" Expressions ">  
   Expression parseExpression() throws SyntaxError {
     Expression expressionAST = null; // in case there's a syntactic error
 
@@ -611,13 +726,14 @@ public class Parser {
     }
     return aggregateAST;
   }
-
+  // </editor-fold>  
+  
 ///////////////////////////////////////////////////////////////////////////////
 //
 // VALUE-OR-VARIABLE NAMES
 //
 ///////////////////////////////////////////////////////////////////////////////
-
+  // <editor-fold defaultstate="collapsed" desc=" Value-or-Variable Names ">   
   Vname parseVname () throws SyntaxError {
     Vname vnameAST = null; // in case there's a syntactic error
     Identifier iAST = parseIdentifier();
@@ -647,13 +763,14 @@ public class Parser {
     }
     return vAST;
   }
+  // </editor-fold>  
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 // DECLARATIONS
 //
 ///////////////////////////////////////////////////////////////////////////////
-
+  // <editor-fold defaultstate="collapsed" desc=" Declarations "> 
   Declaration parseDeclaration() throws SyntaxError {
     Declaration declarationAST = null; // in case there's a syntactic error
 
@@ -750,13 +867,14 @@ public class Parser {
     }
     return declarationAST;
   }
+  // </editor-fold>  
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 // PARAMETERS
 //
 ///////////////////////////////////////////////////////////////////////////////
-
+  // <editor-fold defaultstate="collapsed" desc=" Parameters ">   
   FormalParameterSequence parseFormalParameterSequence() throws SyntaxError {
     FormalParameterSequence formalsAST;
 
@@ -956,13 +1074,14 @@ public class Parser {
     }
     return actualAST;
   }
+  // </editor-fold>   
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 // TYPE-DENOTERS
 //
 ///////////////////////////////////////////////////////////////////////////////
-
+  // <editor-fold defaultstate="collapsed" desc=" Type Denoters "> 
   TypeDenoter parseTypeDenoter() throws SyntaxError {
     TypeDenoter typeAST = null; // in case there's a syntactic error
     SourcePosition typePos = new SourcePosition();
@@ -1030,3 +1149,4 @@ public class Parser {
     return fieldAST;
   }
 }
+// </editor-fold>   

@@ -51,6 +51,10 @@ import Triangle.AbstractSyntaxTrees.IntegerExpression;
 import Triangle.AbstractSyntaxTrees.IntegerLiteral;
 import Triangle.AbstractSyntaxTrees.LetCommand;
 import Triangle.AbstractSyntaxTrees.LetExpression;
+import Triangle.AbstractSyntaxTrees.LoopConditional;
+import Triangle.AbstractSyntaxTrees.LoopForCommand;
+import Triangle.AbstractSyntaxTrees.LoopPostDoCommand;
+import Triangle.AbstractSyntaxTrees.LoopPreDoCommand;
 import Triangle.AbstractSyntaxTrees.MultipleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleArrayAggregate;
 import Triangle.AbstractSyntaxTrees.MultipleElsifSequence;
@@ -125,6 +129,7 @@ public class LayoutVisitor implements Visitor {
     return layoutBinary("WhileCom.", ast.E, ast.C);
   }
   
+  // Elsif
   public Object visitElsif(Elsif ast, Object o) {
     return layoutBinary("Elsif.", ast.E, ast.C); 
   }
@@ -141,7 +146,15 @@ public class LayoutVisitor implements Visitor {
     return layoutBinary("MultipleE.S.", ast.E, ast.ES); 
   }
 
-
+  // Loops
+  public Object visitLoopConditional(LoopConditional ast, Object obj) {
+    return layoutNullary(ast.spelling);
+  }
+  
+  public Object visitLoopPostDoCommand(LoopPostDoCommand ast, Object obj) {
+    return layoutTernary("LoopP.D.", ast.LC, ast.E, ast.C);
+  }
+  
   // Expressions
   public Object visitArrayExpression(ArrayExpression ast, Object obj) {
     return layoutUnary("ArrayExpr.", ast.AA);
@@ -562,4 +575,14 @@ public class LayoutVisitor implements Visitor {
 
     return r;
   }
+  
+  @Override
+    public Object visitLoopPreDoCommand(LoopPreDoCommand ast, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public Object visitLoopForCommand(LoopForCommand ast, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
