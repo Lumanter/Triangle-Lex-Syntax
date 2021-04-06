@@ -47,7 +47,7 @@ import Triangle.AbstractSyntaxTrees.DotVname;
 import Triangle.AbstractSyntaxTrees.Elsif;
 import Triangle.AbstractSyntaxTrees.EmptyActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.EmptyCommand;
-import Triangle.AbstractSyntaxTrees.EmptyElsifSequence;
+import Triangle.AbstractSyntaxTrees.ElsifSequenceEmpty;
 import Triangle.AbstractSyntaxTrees.EmptyExpression;
 import Triangle.AbstractSyntaxTrees.EmptyFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.ErrorTypeDenoter;
@@ -68,7 +68,7 @@ import Triangle.AbstractSyntaxTrees.LoopPostDoCommand;
 import Triangle.AbstractSyntaxTrees.LoopPreDoCommand;
 import Triangle.AbstractSyntaxTrees.MultipleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleArrayAggregate;
-import Triangle.AbstractSyntaxTrees.MultipleElsifSequence;
+import Triangle.AbstractSyntaxTrees.ElsifSequenceMultiple;
 import Triangle.AbstractSyntaxTrees.MultipleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.MultipleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleRecordAggregate;
@@ -85,7 +85,7 @@ import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SimpleVname;
 import Triangle.AbstractSyntaxTrees.SingleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleArrayAggregate;
-import Triangle.AbstractSyntaxTrees.SingleElsifSequence;
+import Triangle.AbstractSyntaxTrees.ElsifSequenceSingle;
 import Triangle.AbstractSyntaxTrees.SingleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
@@ -145,15 +145,15 @@ public class LayoutVisitor implements Visitor {
     return layoutBinary("Elsif.", ast.E, ast.C); 
   }
   
-  public Object visitEmptyElsifSequence(EmptyElsifSequence ast, Object obj) {
+  public Object visitElsifSequenceEmpty(ElsifSequenceEmpty ast, Object obj) {
     return layoutNullary("EmptyE.S.");
   }
   
-  public Object visitSingleElsifSequence(SingleElsifSequence ast, Object obj) {
+  public Object visitElsifSequenceSingle(ElsifSequenceSingle ast, Object obj) {
     return layoutUnary("SingleE.S.", ast.E);
   }
 
-  public Object visitMultipleElsifSequence(MultipleElsifSequence ast, Object o) {
+  public Object visitElsifSequenceMultiple(ElsifSequenceMultiple ast, Object o) {
     return layoutBinary("MultipleE.S.", ast.E, ast.ES); 
   }
 

@@ -27,9 +27,9 @@ public interface Visitor {
 
   // Elsif
   public abstract Object visitElsif(Elsif ast, Object o);
-  public abstract Object visitEmptyElsifSequence(EmptyElsifSequence ast, Object o);
-  public abstract Object visitSingleElsifSequence(SingleElsifSequence ast, Object o);
-  public abstract Object visitMultipleElsifSequence(MultipleElsifSequence ast, Object o);
+  public abstract Object visitElsifSequenceEmpty(ElsifSequenceEmpty ast, Object o);
+  public abstract Object visitElsifSequenceSingle(ElsifSequenceSingle ast, Object o);
+  public abstract Object visitElsifSequenceMultiple(ElsifSequenceMultiple ast, Object o);
 
   // Loops
   public abstract Object visitLoopConditional(LoopConditional ast, Object o);

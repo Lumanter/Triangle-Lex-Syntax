@@ -51,7 +51,7 @@ import Triangle.AbstractSyntaxTrees.Elsif;
 import Triangle.AbstractSyntaxTrees.ElsifSequence;
 import Triangle.AbstractSyntaxTrees.EmptyActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.EmptyCommand;
-import Triangle.AbstractSyntaxTrees.EmptyElsifSequence;
+import Triangle.AbstractSyntaxTrees.ElsifSequenceEmpty;
 import Triangle.AbstractSyntaxTrees.EmptyFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.Expression;
 import Triangle.AbstractSyntaxTrees.FieldTypeDenoter;
@@ -73,7 +73,7 @@ import Triangle.AbstractSyntaxTrees.LoopPostDoCommand;
 import Triangle.AbstractSyntaxTrees.LoopPreDoCommand;
 import Triangle.AbstractSyntaxTrees.MultipleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleArrayAggregate;
-import Triangle.AbstractSyntaxTrees.MultipleElsifSequence;
+import Triangle.AbstractSyntaxTrees.ElsifSequenceMultiple;
 import Triangle.AbstractSyntaxTrees.MultipleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.MultipleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleRecordAggregate;
@@ -91,7 +91,7 @@ import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SimpleVname;
 import Triangle.AbstractSyntaxTrees.SingleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleArrayAggregate;
-import Triangle.AbstractSyntaxTrees.SingleElsifSequence;
+import Triangle.AbstractSyntaxTrees.ElsifSequenceSingle;
 import Triangle.AbstractSyntaxTrees.SingleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
@@ -674,7 +674,7 @@ public class Parser {
     
     if (currentToken.kind == Token.ELSE) {
       finish(pos);
-      return new EmptyElsifSequence(pos);
+      return new ElsifSequenceEmpty(pos);
     } else {
       return parseProperElsifSequence();
     }
@@ -695,11 +695,11 @@ public class Parser {
     if (currentToken.kind == Token.ELSIF) {
       ElsifSequence chainedSequenceAST = parseProperElsifSequence();
       finish(pos);
-      sequenceAST = new MultipleElsifSequence(elsifAST, chainedSequenceAST,pos);
+      sequenceAST = new ElsifSequenceMultiple(elsifAST, chainedSequenceAST,pos);
 
     } else {
       finish(pos);
-      sequenceAST = new SingleElsifSequence(elsifAST, pos);
+      sequenceAST = new ElsifSequenceSingle(elsifAST, pos);
     }
     return sequenceAST;
   }

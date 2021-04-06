@@ -1,22 +1,23 @@
-
 package Triangle.AbstractSyntaxTrees;
 
 import Triangle.SyntacticAnalyzer.SourcePosition;
 
 /**
- * Empty elsif sequence's AST node.
+ * Single elsif sequence's AST node.
  * @author Luis Mariano Ramirez Segura (@github marianosegura) 
  */
-public class EmptyElsifSequence extends ElsifSequence {
+public class ElsifSequenceSingle extends ElsifSequence {
     
     /**
      * AST constructor.
+     * @param eAST Elsif AST node
      * @param pos Code line position inside source file
      */
-    public EmptyElsifSequence (SourcePosition pos) {
-        super (pos);
+    public ElsifSequenceSingle (Elsif eAST, SourcePosition pos) {
+        super(pos);
+        E = eAST;
     }
-    
+
     
     /**
      * Implementation of AST visit method, calls the visitor method for this class.
@@ -25,6 +26,10 @@ public class EmptyElsifSequence extends ElsifSequence {
      * @return Result of calling the visitor method for this class
      */
     public Object visit(Visitor v, Object o) {
-        return v.visitEmptyElsifSequence(this, o);
+        return v.visitElsifSequenceSingle(this, o);
     }
+    
+    
+    /* Elsif AST node */
+    public Elsif E;
 }
