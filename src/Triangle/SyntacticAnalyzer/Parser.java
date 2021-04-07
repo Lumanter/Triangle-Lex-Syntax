@@ -545,7 +545,7 @@ public class Parser {
         finish(pos);
         ast = new CaseLiteralCharacter(charAST, pos);
     } else {
-        syntacticError("\"%\" cannot start an case literal (int or char)", currentToken.spelling);
+        syntacticError("\"%\" cannot start a case literal (int or char)", currentToken.spelling);
     }
     return ast;
   } 
