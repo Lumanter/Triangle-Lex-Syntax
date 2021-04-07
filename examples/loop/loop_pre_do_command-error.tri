@@ -1,4 +1,4 @@
 loop do
  n := n + 1
-while  ! lacks conditional expression after while
+until  ! lacks conditional expression after while
 end
