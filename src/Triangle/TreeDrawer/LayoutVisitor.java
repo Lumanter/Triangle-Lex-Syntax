@@ -98,7 +98,7 @@ import Triangle.AbstractSyntaxTrees.VarDeclaration;
 import Triangle.AbstractSyntaxTrees.VarFormalParameter;
 import Triangle.AbstractSyntaxTrees.Visitor;
 import Triangle.AbstractSyntaxTrees.VnameExpression;
-import Triangle.AbstractSyntaxTrees.WhileCommand;
+
 
 public class LayoutVisitor implements Visitor {
 
@@ -134,10 +134,6 @@ public class LayoutVisitor implements Visitor {
 
   public Object visitSequentialCommand(SequentialCommand ast, Object obj) {
     return layoutBinary("Seq.Com.", ast.C1, ast.C2);
-  }
-
-  public Object visitWhileCommand(WhileCommand ast, Object obj) {
-    return layoutBinary("WhileCom.", ast.E, ast.C);
   }
   
   // Elsif
