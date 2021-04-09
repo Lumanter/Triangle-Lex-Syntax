@@ -363,7 +363,7 @@ public class Parser {
     case Token.CHOOSE:
       {
         acceptIt();
-        commandAST = parseChooseCommand();
+        commandAST = parseCaseCommand();
       }
       break;
 
@@ -393,11 +393,11 @@ public class Parser {
 ///////////////////////////////////////////////////////////////////////////////
 // <editor-fold defaultstate="collapsed" desc=" Choose "> 
   /**
-   * Parses a choose command.
-   * @return choose command ast
+   * Parses a case command.
+   * @return case command ast
    * @throws SyntaxError 
    */
-  CaseCommand parseChooseCommand() throws SyntaxError {  // Expression from Cases end 
+  CaseCommand parseCaseCommand() throws SyntaxError {  // Expression from Cases end 
     CaseCommand ast = null;
     SourcePosition pos = new SourcePosition();
     start(pos);
