@@ -13,6 +13,7 @@ import Triangle.AbstractSyntaxTrees.Program;
 import Triangle.SyntacticAnalyzer.Parser;
 import Triangle.ContextualAnalyzer.Checker;
 import Triangle.CodeGenerator.Encoder;
+import Triangle.XML.XMLCreator;
 
 
 
@@ -52,6 +53,11 @@ public class IDECompiler {
         boolean success = false;
         
         rootAST = parser.parseProgram();
+        
+        /// Archivo XML
+        xmlDoc   = new XMLCreator(sourceName);
+        xmlDoc.create(rootAST);    ////    Nuevo
+        
         if (report.numErrors == 0) {
 //            System.out.println("Contextual Analysis ...");
 //            Checker checker = new Checker(report);
@@ -97,4 +103,9 @@ public class IDECompiler {
     private Program rootAST;        // The Root Abstract Syntax Tree.    
     private IDEReporter report;     // Our ErrorReporter class.
     // </editor-fold>
+    
+    // Nueva implementacion
+    private XMLCreator xmlDoc;
+            
+            
 }
