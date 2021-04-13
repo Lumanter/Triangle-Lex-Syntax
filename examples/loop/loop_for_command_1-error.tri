@@ -1,0 +1,4 @@
+loop for n from 0 to ! lacking expression after to
+do  ! option (do Command end)
+ putint(n) 
+end

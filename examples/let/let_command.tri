@@ -1,0 +1,5 @@
+let
+ var i: Integer
+in
+ i:= 1; i := 2
+end

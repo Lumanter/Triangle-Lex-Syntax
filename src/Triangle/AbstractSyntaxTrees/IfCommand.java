@@ -16,20 +16,52 @@ package Triangle.AbstractSyntaxTrees;
 
 import Triangle.SyntacticAnalyzer.SourcePosition;
 
+
+// modified by Luis Mariano Ramirez Segura (@github marianosegura) on 04/04/2021
+/**
+ * If command's AST node.
+ * @author Luis Mariano Ramirez Segura (@github marianosegura) 
+ */
 public class IfCommand extends Command {
 
-  public IfCommand (Expression eAST, Command c1AST, Command c2AST,
-                    SourcePosition thePosition) {
-    super (thePosition);
-    E = eAST;
-    C1 = c1AST;
-    C2 = c2AST;
-  }
+    /**
+     * AST constructor.
+     * @param conditionAST Conditional expression for first if command
+     * @param ifCommandAST First if command
+     * @param elsifSequenceAST Sequence of chained elsif expressions
+     * @param elseCommandAST Else command
+     * @param pos Code line position inside source file
+     */
+    public IfCommand (Expression conditionAST, Command ifCommandAST, ElsifSequence elsifSequenceAST,
+                    Command elseCommandAST, SourcePosition pos) {
+        super (pos);
+        E = conditionAST;
+        C1 = ifCommandAST;
+        C2 = elseCommandAST;
+        S = elsifSequenceAST;
+    }
 
-  public Object visit(Visitor v, Object o) {
-    return v.visitIfCommand(this, o);
-  }
+    
+    /**
+     * Implementation of AST visit method, calls the visitor method for this class.
+     * @param v Visitor entity
+     * @param o Generic object used by the caller
+     * @return Result of calling the visitor method for this class
+     */
+    public Object visit(Visitor v, Object o) {
+        return v.visitIfCommand(this, o);
+    }
 
+
+  /* Conditional expression for first if command */
   public Expression E;
-  public Command C1, C2;
+  
+  /* First if command */
+  public Command C1;
+    
+  /* Else command */
+  public Command C2;
+  
+  /* Sequence of chained elsif expressions */
+  public ElsifSequence S;
 }

@@ -1,0 +1,5 @@
+choose num from  
+when 1 | 2 | 3 then case := 1
+when 4..10 then case := 2; putint(num)
+else case := 3
+end

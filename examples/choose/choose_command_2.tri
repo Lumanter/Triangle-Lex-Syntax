@@ -1,0 +1,4 @@
+choose char from  
+when 'a' | 'b' then case := 1
+when 'c'..'m' then case := 2
+end

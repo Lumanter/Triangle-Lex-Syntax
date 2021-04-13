@@ -24,6 +24,21 @@ import Triangle.AbstractSyntaxTrees.AssignCommand;
 import Triangle.AbstractSyntaxTrees.BinaryExpression;
 import Triangle.AbstractSyntaxTrees.CallCommand;
 import Triangle.AbstractSyntaxTrees.CallExpression;
+import Triangle.AbstractSyntaxTrees.Case;
+import Triangle.AbstractSyntaxTrees.CaseCommand;
+import Triangle.AbstractSyntaxTrees.CaseLiteral;
+import Triangle.AbstractSyntaxTrees.CaseLiteralCharacter;
+import Triangle.AbstractSyntaxTrees.CaseLiteralInteger;
+import Triangle.AbstractSyntaxTrees.CaseLiteralsSequence;
+import Triangle.AbstractSyntaxTrees.CaseLiteralsSequenceMultiple;
+import Triangle.AbstractSyntaxTrees.CaseLiteralsSequenceSingle;
+import Triangle.AbstractSyntaxTrees.CaseRange;
+import Triangle.AbstractSyntaxTrees.CaseRangeOne;
+import Triangle.AbstractSyntaxTrees.CaseRangeTwo;
+import Triangle.AbstractSyntaxTrees.CaseSequence;
+import Triangle.AbstractSyntaxTrees.CaseSequenceMultiple;
+import Triangle.AbstractSyntaxTrees.CaseSequenceSingle;
+import Triangle.AbstractSyntaxTrees.Cases;
 import Triangle.AbstractSyntaxTrees.CharacterExpression;
 import Triangle.AbstractSyntaxTrees.CharacterLiteral;
 import Triangle.AbstractSyntaxTrees.Command;
@@ -32,8 +47,11 @@ import Triangle.AbstractSyntaxTrees.ConstDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstFormalParameter;
 import Triangle.AbstractSyntaxTrees.Declaration;
 import Triangle.AbstractSyntaxTrees.DotVname;
+import Triangle.AbstractSyntaxTrees.Elsif;
+import Triangle.AbstractSyntaxTrees.ElsifSequence;
 import Triangle.AbstractSyntaxTrees.EmptyActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.EmptyCommand;
+import Triangle.AbstractSyntaxTrees.ElsifSequenceEmpty;
 import Triangle.AbstractSyntaxTrees.EmptyFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.Expression;
 import Triangle.AbstractSyntaxTrees.FieldTypeDenoter;
@@ -49,8 +67,13 @@ import Triangle.AbstractSyntaxTrees.IntegerExpression;
 import Triangle.AbstractSyntaxTrees.IntegerLiteral;
 import Triangle.AbstractSyntaxTrees.LetCommand;
 import Triangle.AbstractSyntaxTrees.LetExpression;
+import Triangle.AbstractSyntaxTrees.LoopConditional;
+import Triangle.AbstractSyntaxTrees.LoopForCommand;
+import Triangle.AbstractSyntaxTrees.LoopPostDoCommand;
+import Triangle.AbstractSyntaxTrees.LoopPreDoCommand;
 import Triangle.AbstractSyntaxTrees.MultipleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleArrayAggregate;
+import Triangle.AbstractSyntaxTrees.ElsifSequenceMultiple;
 import Triangle.AbstractSyntaxTrees.MultipleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.MultipleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleRecordAggregate;
@@ -68,6 +91,7 @@ import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SimpleVname;
 import Triangle.AbstractSyntaxTrees.SingleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleArrayAggregate;
+import Triangle.AbstractSyntaxTrees.ElsifSequenceSingle;
 import Triangle.AbstractSyntaxTrees.SingleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
@@ -80,7 +104,7 @@ import Triangle.AbstractSyntaxTrees.VarDeclaration;
 import Triangle.AbstractSyntaxTrees.VarFormalParameter;
 import Triangle.AbstractSyntaxTrees.Vname;
 import Triangle.AbstractSyntaxTrees.VnameExpression;
-import Triangle.AbstractSyntaxTrees.WhileCommand;
+
 
 public class Parser {
 
@@ -166,7 +190,7 @@ public class Parser {
 // LITERALS
 //
 ///////////////////////////////////////////////////////////////////////////////
-
+  // <editor-fold defaultstate="collapsed" desc=" Literals ">  
 // parseIntegerLiteral parses an integer-literal, and constructs
 // a leaf AST to represent it.
 
@@ -238,13 +262,14 @@ public class Parser {
     }
     return O;
   }
-
+  // </editor-fold> 
+  
 ///////////////////////////////////////////////////////////////////////////////
 //
 // COMMANDS
 //
 ///////////////////////////////////////////////////////////////////////////////
-
+  // <editor-fold defaultstate="collapsed" desc=" Commands ">  
 // parseCommand parses the command, and constructs an AST
 // to represent its phrase structure.
 
@@ -264,6 +289,7 @@ public class Parser {
     return commandAST;
   }
 
+  
   Command parseSingleCommand() throws SyntaxError {
     Command commandAST = null; // in case there's a syntactic error
 
@@ -293,56 +319,61 @@ public class Parser {
       }
       break;
 
-    case Token.BEGIN:
-      acceptIt();
-      commandAST = parseCommand();
-      accept(Token.END);
-      break;
-
     case Token.LET:
       {
         acceptIt();
         Declaration dAST = parseDeclaration();
         accept(Token.IN);
-        Command cAST = parseSingleCommand();
+        Command cAST = parseCommand();
+        accept(Token.END);
         finish(commandPos);
         commandAST = new LetCommand(dAST, cAST, commandPos);
       }
       break;
 
-    case Token.IF:
+    case Token.IF:  // if Expression then Command (elsif Expression then Command)* else Command end
       {
         acceptIt();
-        Expression eAST = parseExpression();
+        Expression ifConditionAST = parseExpression();
         accept(Token.THEN);
-        Command c1AST = parseSingleCommand();
+        Command ifCommandAST = parseCommand();
+        ElsifSequence elsifAST = parseElsifSequence(); 
         accept(Token.ELSE);
-        Command c2AST = parseSingleCommand();
+        Command elseCommandAST = parseSingleCommand();
+        accept(Token.END);
         finish(commandPos);
-        commandAST = new IfCommand(eAST, c1AST, c2AST, commandPos);
+        commandAST = new IfCommand(ifConditionAST, ifCommandAST, elsifAST, elseCommandAST, commandPos);
+  
       }
       break;
-
-    case Token.WHILE:
+    
+    case Token.LOOP:  // Loop-Pre-Do | Loop-For | Loop-Post-Do
       {
         acceptIt();
-        Expression eAST = parseExpression();
-        accept(Token.DO);
-        Command cAST = parseSingleCommand();
-        finish(commandPos);
-        commandAST = new WhileCommand(eAST, cAST, commandPos);
+        if (currentToken.kind == Token.DO) {
+            commandAST = parseLoopPreDoCommand();
+        } else if (currentToken.kind == Token.FOR) {
+            commandAST = parseLoopForCommand();
+        } else {
+            commandAST = parseLoopPostDoCommand();
+        }
+      }
+      break;
+     
+    case Token.CHOOSE:
+      {
+        acceptIt();
+        commandAST = parseCaseCommand();
       }
       break;
 
-    case Token.SEMICOLON:
-    case Token.END:
-    case Token.ELSE:
-    case Token.IN:
-    case Token.EOT:
-
+    case Token.NOTHING:
+     {
+      acceptIt();
       finish(commandPos);
       commandAST = new EmptyCommand(commandPos);
-      break;
+     } 
+     break;
 
     default:
       syntacticError("\"%\" cannot start a command",
@@ -353,13 +384,343 @@ public class Parser {
 
     return commandAST;
   }
+  // </editor-fold> 
 
+///////////////////////////////////////////////////////////////////////////////
+//
+// CHOOSE
+//
+///////////////////////////////////////////////////////////////////////////////
+// <editor-fold defaultstate="collapsed" desc=" Choose "> 
+  /**
+   * Parses a case command.
+   * @return case command ast
+   * @throws SyntaxError 
+   */
+  CaseCommand parseCaseCommand() throws SyntaxError {  // Expression from Cases end 
+    CaseCommand ast = null;
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    Expression expressionAST = parseExpression();
+    accept(Token.FROM);
+    Cases casesAST = parseCases();
+    accept(Token.END);
+    
+    finish(pos);
+    ast = new CaseCommand(expressionAST, casesAST, pos);
+    return ast;
+  }
+  
+  
+  /**
+   * Parses a cases ast node, case sequence and else command
+   * @return cases ast
+   * @throws SyntaxError 
+   */
+  Cases parseCases() throws SyntaxError {
+    Cases ast = null;
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    CaseSequence caseSequenceAST = parseCaseSequence();
+    Command elseCommandAST = new EmptyCommand(pos);
+    if (currentToken.kind == Token.ELSE) {
+        acceptIt();
+        elseCommandAST = parseCommand();
+    }
+    
+    finish(pos);
+    ast = new Cases(caseSequenceAST, elseCommandAST, pos);
+    return ast;
+  }
+  
+  
+  /**
+   * Parses a case sequence
+   * @return case sequence ast
+   * @throws SyntaxError 
+   */
+  CaseSequence parseCaseSequence() throws SyntaxError {  // Case+
+    CaseSequence sequenceAST = null;  // for syntax error case
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    Case caseAST = parseCase();
+    if (currentToken.kind == Token.WHEN) {
+      CaseSequence chainedSequenceAST = parseCaseSequence();
+      finish(pos);
+      sequenceAST = new CaseSequenceMultiple(caseAST, chainedSequenceAST,pos);
+
+    } else {
+      finish(pos);
+      sequenceAST = new CaseSequenceSingle(caseAST, pos);
+    }
+    return sequenceAST;
+  }
+  
+  /**
+   * Parses a case
+   * @return case ast
+   * @throws SyntaxError 
+   */
+  Case parseCase() throws SyntaxError {  // when Case-Literals then Command 
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    accept(Token.WHEN);
+    CaseLiteralsSequence caseLiteralsAST = parseCaseLiteralsSequence();
+    accept(Token.THEN);
+    Command commandAST = parseCommand();
+    
+    finish(pos);
+    return new Case(caseLiteralsAST, commandAST, pos);
+  }
+  
+  
+  /**
+   * Parses a sequence of case ranges
+   * @return case range sequence ast
+   * @throws SyntaxError 
+   */
+  CaseLiteralsSequence parseCaseLiteralsSequence() throws SyntaxError {  // Case-Range (| Case-Range)* 
+    CaseLiteralsSequence sequenceAST = null;  // for syntax error case
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    CaseRange caseRangeAST = parseCaseRange();
+    if (currentToken.kind == Token.OR) {
+      acceptIt();
+      CaseLiteralsSequence chainedSequenceAST = parseCaseLiteralsSequence();
+      finish(pos);
+      sequenceAST = new CaseLiteralsSequenceMultiple(caseRangeAST, chainedSequenceAST,pos);
+
+    } else {
+      finish(pos);
+      sequenceAST = new CaseLiteralsSequenceSingle(caseRangeAST, pos);
+    }
+    return sequenceAST;
+  }
+  
+  
+  /**
+   * Parses a case range with one or two literals.
+   * @return case range ast
+   * @throws SyntaxError 
+   */
+  CaseRange parseCaseRange() throws SyntaxError {  // Case-Literal [.. Case-Literal] 
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    CaseLiteral fromAST = parseCaseLiteral();
+    if (currentToken.kind == Token.TWODOTS) {
+        acceptIt();
+        CaseLiteral toAST = parseCaseLiteral();
+        finish(pos);
+        return new CaseRangeTwo(fromAST, toAST, pos);
+    } else {
+        finish(pos);
+        return new CaseRangeOne(fromAST, pos);
+    }
+  }
+  
+    
+  /**
+   * Parses a case literal.
+   * @return case literal ast
+   * @throws SyntaxError 
+   */
+  CaseLiteral parseCaseLiteral() throws SyntaxError {  // Integer-Literal | Character-Literal
+    CaseLiteral ast = null;  // for syntax errors
+    
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    if (currentToken.kind == Token.INTLITERAL) {
+        IntegerLiteral intAST = parseIntegerLiteral();
+        finish(pos);
+        ast = new CaseLiteralInteger(intAST, pos);
+    } else if (currentToken.kind == Token.CHARLITERAL) {
+        CharacterLiteral charAST = parseCharacterLiteral();
+        finish(pos);
+        ast = new CaseLiteralCharacter(charAST, pos);
+    } else {
+        syntacticError("\"%\" cannot start a case literal (int or char)", currentToken.spelling);
+    }
+    return ast;
+  } 
+  
+// </editor-fold>   
+  
+///////////////////////////////////////////////////////////////////////////////
+//
+// LOOPS
+//
+///////////////////////////////////////////////////////////////////////////////
+// <editor-fold defaultstate="collapsed" desc=" Loops "> 
+  /**
+   * Parses a loop pre do command.
+   * @return loop pre do command AST
+   * @throws SyntaxError 
+   */
+  LoopPreDoCommand parseLoopPreDoCommand() throws SyntaxError {  // do Command Loop-Conditional Expression end
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    accept(Token.DO);
+    Command command = parseCommand();
+    LoopConditional conditional = parseLoopConditional();
+    Expression expression = parseExpression();
+    accept(Token.END);
+    
+    finish(pos);
+    return new LoopPreDoCommand(command, conditional, expression, pos);
+  }
+  
+  
+  /**
+   * Parses a loop post do command.
+   * @return loop post do command AST
+   * @throws SyntaxError 
+   */
+  LoopPostDoCommand parseLoopPostDoCommand() throws SyntaxError {  // Loop-Conditional Expression do Command end
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    LoopConditional conditional = parseLoopConditional();
+    Expression expression = parseExpression();
+    accept(Token.DO);
+    Command command = parseCommand();
+    accept(Token.END);
+    
+    finish(pos);
+    return new LoopPostDoCommand(conditional, expression, command, pos);
+  }
+  
+  
+  /**
+   * Parses a loop for command.
+   * @return loop for command AST
+   * @throws SyntaxError 
+   */
+  LoopForCommand parseLoopForCommand() throws SyntaxError {  // for Identifier from Expression to Expression (do Command end | Loop-Post-Do)
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    accept(Token.FOR);
+    Identifier identifier = parseIdentifier();
+    accept(Token.FROM);
+    Expression from = parseExpression();
+    accept(Token.TO);
+    Expression to = parseExpression();
+    Command command;
+    if (currentToken.kind == Token.DO) {
+        acceptIt();
+        command = parseCommand();
+        accept(Token.END);
+    } else {
+        command = parseLoopPostDoCommand();
+    }
+    
+    finish(pos);
+    return new LoopForCommand(identifier, from, to, command, pos);
+  }
+  
+  
+  /**
+   * Parses a loop conditional, while or until.
+   * @return loop conditional AST
+   * @throws SyntaxError 
+   */
+  LoopConditional parseLoopConditional() throws SyntaxError {
+    LoopConditional ast = null;
+    if (currentToken.kind == Token.WHILE || currentToken.kind == Token.UNTIL) {
+        previousTokenPosition = currentToken.position;
+        String spelling = currentToken.spelling;
+        ast = new LoopConditional(spelling, previousTokenPosition);
+        currentToken = lexicalAnalyser.scan();
+    } else {
+        syntacticError("while or until expected here", "");
+    }
+    return ast;
+  }
+// </editor-fold> 
+  
+///////////////////////////////////////////////////////////////////////////////
+//
+// ELSIF
+//
+///////////////////////////////////////////////////////////////////////////////
+  // <editor-fold defaultstate="collapsed" desc=" Elsif ">   
+  /**
+   * Parses an elsif sequence, can be empty.
+   * @return Elsif sequence AST
+   * @throws SyntaxError 
+   */
+  ElsifSequence parseElsifSequence() throws SyntaxError {
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    if (currentToken.kind == Token.ELSE) {
+      finish(pos);
+      return new ElsifSequenceEmpty(pos);
+    } else {
+      return parseProperElsifSequence();
+    }
+  }
+  
+  
+  /**
+   * Parses a proper elsif sequence, can be a single elsif expression or a chain of multiple ones.
+   * @return Elsif sequence AST
+   * @throws SyntaxError 
+   */
+  ElsifSequence parseProperElsifSequence() throws SyntaxError {
+    ElsifSequence sequenceAST = null;  // for syntax error case
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    Elsif elsifAST = parseElsif();
+    if (currentToken.kind == Token.ELSIF) {
+      ElsifSequence chainedSequenceAST = parseProperElsifSequence();
+      finish(pos);
+      sequenceAST = new ElsifSequenceMultiple(elsifAST, chainedSequenceAST,pos);
+
+    } else {
+      finish(pos);
+      sequenceAST = new ElsifSequenceSingle(elsifAST, pos);
+    }
+    return sequenceAST;
+  }
+  
+  
+  /**
+   * Parses a elsif expression.
+   * @return Elsif AST
+   * @throws SyntaxError 
+   */
+  Elsif parseElsif() throws SyntaxError {
+    accept(Token.ELSIF);
+    
+    SourcePosition pos = new SourcePosition();
+    start(pos);
+    
+    Expression conditionAST = parseExpression();
+    accept(Token.THEN);
+    Command commandAST = parseCommand();
+    
+    finish(pos);
+    return new Elsif(conditionAST, commandAST, pos);
+  }
+  // </editor-fold> 
+  
+  
 ///////////////////////////////////////////////////////////////////////////////
 //
 // EXPRESSIONS
 //
 ///////////////////////////////////////////////////////////////////////////////
-
+  // <editor-fold defaultstate="collapsed" desc=" Expressions ">  
   Expression parseExpression() throws SyntaxError {
     Expression expressionAST = null; // in case there's a syntactic error
 
@@ -542,13 +903,14 @@ public class Parser {
     }
     return aggregateAST;
   }
-
+  // </editor-fold>  
+  
 ///////////////////////////////////////////////////////////////////////////////
 //
 // VALUE-OR-VARIABLE NAMES
 //
 ///////////////////////////////////////////////////////////////////////////////
-
+  // <editor-fold defaultstate="collapsed" desc=" Value-or-Variable Names ">   
   Vname parseVname () throws SyntaxError {
     Vname vnameAST = null; // in case there's a syntactic error
     Identifier iAST = parseIdentifier();
@@ -578,13 +940,14 @@ public class Parser {
     }
     return vAST;
   }
+  // </editor-fold>  
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 // DECLARATIONS
 //
 ///////////////////////////////////////////////////////////////////////////////
-
+  // <editor-fold defaultstate="collapsed" desc=" Declarations "> 
   Declaration parseDeclaration() throws SyntaxError {
     Declaration declarationAST = null; // in case there's a syntactic error
 
@@ -681,13 +1044,14 @@ public class Parser {
     }
     return declarationAST;
   }
+  // </editor-fold>  
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 // PARAMETERS
 //
 ///////////////////////////////////////////////////////////////////////////////
-
+  // <editor-fold defaultstate="collapsed" desc=" Parameters ">   
   FormalParameterSequence parseFormalParameterSequence() throws SyntaxError {
     FormalParameterSequence formalsAST;
 
@@ -805,6 +1169,7 @@ public class Parser {
     return actualsAST;
   }
 
+  
   ActualParameterSequence parseProperActualParameterSequence() throws SyntaxError {
     ActualParameterSequence actualsAST = null; // in case there's a syntactic error
 
@@ -825,6 +1190,7 @@ public class Parser {
     return actualsAST;
   }
 
+  
   ActualParameter parseActualParameter() throws SyntaxError {
     ActualParameter actualAST = null; // in case there's a syntactic error
 
@@ -885,13 +1251,14 @@ public class Parser {
     }
     return actualAST;
   }
+  // </editor-fold>   
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 // TYPE-DENOTERS
 //
 ///////////////////////////////////////////////////////////////////////////////
-
+  // <editor-fold defaultstate="collapsed" desc=" Type Denoters "> 
   TypeDenoter parseTypeDenoter() throws SyntaxError {
     TypeDenoter typeAST = null; // in case there's a syntactic error
     SourcePosition typePos = new SourcePosition();
@@ -959,3 +1326,4 @@ public class Parser {
     return fieldAST;
   }
 }
+// </editor-fold>   

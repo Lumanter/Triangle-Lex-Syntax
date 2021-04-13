@@ -1,0 +1,4 @@
+loop for n from 0 to 5 
+while (a < 4) do  ! option (Loop-Post-Do)
+ a := n
+end 

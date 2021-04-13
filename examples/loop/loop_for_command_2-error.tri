@@ -1,0 +1,4 @@
+loop for from 0 to 5  ! lacking identifier after for keyword
+while (a < 4) do  ! option (Loop-Post-Do)
+ a := n
+end 

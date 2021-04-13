@@ -26,6 +26,17 @@ import Triangle.AbstractSyntaxTrees.BinaryOperatorDeclaration;
 import Triangle.AbstractSyntaxTrees.BoolTypeDenoter;
 import Triangle.AbstractSyntaxTrees.CallCommand;
 import Triangle.AbstractSyntaxTrees.CallExpression;
+import Triangle.AbstractSyntaxTrees.Case;
+import Triangle.AbstractSyntaxTrees.CaseCommand;
+import Triangle.AbstractSyntaxTrees.CaseLiteralCharacter;
+import Triangle.AbstractSyntaxTrees.CaseLiteralInteger;
+import Triangle.AbstractSyntaxTrees.CaseLiteralsSequenceMultiple;
+import Triangle.AbstractSyntaxTrees.CaseLiteralsSequenceSingle;
+import Triangle.AbstractSyntaxTrees.CaseRangeOne;
+import Triangle.AbstractSyntaxTrees.CaseRangeTwo;
+import Triangle.AbstractSyntaxTrees.CaseSequenceMultiple;
+import Triangle.AbstractSyntaxTrees.CaseSequenceSingle;
+import Triangle.AbstractSyntaxTrees.Cases;
 import Triangle.AbstractSyntaxTrees.CharTypeDenoter;
 import Triangle.AbstractSyntaxTrees.CharacterExpression;
 import Triangle.AbstractSyntaxTrees.CharacterLiteral;
@@ -33,8 +44,10 @@ import Triangle.AbstractSyntaxTrees.ConstActualParameter;
 import Triangle.AbstractSyntaxTrees.ConstDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstFormalParameter;
 import Triangle.AbstractSyntaxTrees.DotVname;
+import Triangle.AbstractSyntaxTrees.Elsif;
 import Triangle.AbstractSyntaxTrees.EmptyActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.EmptyCommand;
+import Triangle.AbstractSyntaxTrees.ElsifSequenceEmpty;
 import Triangle.AbstractSyntaxTrees.EmptyExpression;
 import Triangle.AbstractSyntaxTrees.EmptyFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.ErrorTypeDenoter;
@@ -49,8 +62,13 @@ import Triangle.AbstractSyntaxTrees.IntegerExpression;
 import Triangle.AbstractSyntaxTrees.IntegerLiteral;
 import Triangle.AbstractSyntaxTrees.LetCommand;
 import Triangle.AbstractSyntaxTrees.LetExpression;
+import Triangle.AbstractSyntaxTrees.LoopConditional;
+import Triangle.AbstractSyntaxTrees.LoopForCommand;
+import Triangle.AbstractSyntaxTrees.LoopPostDoCommand;
+import Triangle.AbstractSyntaxTrees.LoopPreDoCommand;
 import Triangle.AbstractSyntaxTrees.MultipleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleArrayAggregate;
+import Triangle.AbstractSyntaxTrees.ElsifSequenceMultiple;
 import Triangle.AbstractSyntaxTrees.MultipleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.MultipleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleRecordAggregate;
@@ -67,6 +85,7 @@ import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SimpleVname;
 import Triangle.AbstractSyntaxTrees.SingleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleArrayAggregate;
+import Triangle.AbstractSyntaxTrees.ElsifSequenceSingle;
 import Triangle.AbstractSyntaxTrees.SingleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
@@ -79,7 +98,7 @@ import Triangle.AbstractSyntaxTrees.VarDeclaration;
 import Triangle.AbstractSyntaxTrees.VarFormalParameter;
 import Triangle.AbstractSyntaxTrees.Visitor;
 import Triangle.AbstractSyntaxTrees.VnameExpression;
-import Triangle.AbstractSyntaxTrees.WhileCommand;
+
 
 public class LayoutVisitor implements Visitor {
 
@@ -106,7 +125,7 @@ public class LayoutVisitor implements Visitor {
   }
 
   public Object visitIfCommand(IfCommand ast, Object obj) {
-    return layoutTernary("IfCom.", ast.E, ast.C1, ast.C2);
+    return layoutQuaternary("IfCom.", ast.E, ast.C1, ast.S, ast.C2);
   }
 
   public Object visitLetCommand(LetCommand ast, Object obj) {
@@ -116,12 +135,33 @@ public class LayoutVisitor implements Visitor {
   public Object visitSequentialCommand(SequentialCommand ast, Object obj) {
     return layoutBinary("Seq.Com.", ast.C1, ast.C2);
   }
-
-  public Object visitWhileCommand(WhileCommand ast, Object obj) {
-    return layoutBinary("WhileCom.", ast.E, ast.C);
+  
+  // Elsif
+  public Object visitElsif(Elsif ast, Object o) {
+    return layoutBinary("Elsif.", ast.E, ast.C); 
+  }
+  
+  public Object visitElsifSequenceEmpty(ElsifSequenceEmpty ast, Object obj) {
+    return layoutNullary("EmptyE.S.");
+  }
+  
+  public Object visitElsifSequenceSingle(ElsifSequenceSingle ast, Object obj) {
+    return layoutUnary("SingleE.S.", ast.E);
   }
 
+  public Object visitElsifSequenceMultiple(ElsifSequenceMultiple ast, Object o) {
+    return layoutBinary("MultipleE.S.", ast.E, ast.ES); 
+  }
 
+  // Loops
+  public Object visitLoopConditional(LoopConditional ast, Object obj) {
+    return layoutNullary(ast.spelling);
+  }
+  
+  public Object visitLoopPostDoCommand(LoopPostDoCommand ast, Object obj) {
+    return layoutTernary("LoopP.D.", ast.LC, ast.E, ast.C);
+  }
+  
   // Expressions
   public Object visitArrayExpression(ArrayExpression ast, Object obj) {
     return layoutUnary("ArrayExpr.", ast.AA);
@@ -542,5 +582,69 @@ public class LayoutVisitor implements Visitor {
 
     return r;
   }
+  
+  @Override
+    public Object visitLoopPreDoCommand(LoopPreDoCommand ast, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public Object visitLoopForCommand(LoopForCommand ast, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public Object visitCaseLiteralCharacter(CaseLiteralCharacter ast, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
+    @Override
+    public Object visitCaseLiteralInteger(CaseLiteralInteger ast, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public Object visitCaseRangeOne(CaseRangeOne ast, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitCaseRangeTwo(CaseRangeTwo ast, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public Object visitCaseLiteralsSequenceSingle(CaseLiteralsSequenceSingle ast, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitCaseLiteralsSequenceMultiple(CaseLiteralsSequenceMultiple ast, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitCase(Case ast, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public Object visitCaseSequenceSingle(CaseSequenceSingle ast, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitCaseSequenceMultiple(CaseSequenceMultiple ast, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public Object visitCases(Cases ast, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public Object visitCaseCommand(CaseCommand ast, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

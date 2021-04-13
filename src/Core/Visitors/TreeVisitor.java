@@ -14,6 +14,17 @@ import Triangle.AbstractSyntaxTrees.BinaryOperatorDeclaration;
 import Triangle.AbstractSyntaxTrees.BoolTypeDenoter;
 import Triangle.AbstractSyntaxTrees.CallCommand;
 import Triangle.AbstractSyntaxTrees.CallExpression;
+import Triangle.AbstractSyntaxTrees.Case;
+import Triangle.AbstractSyntaxTrees.CaseCommand;
+import Triangle.AbstractSyntaxTrees.CaseLiteralCharacter;
+import Triangle.AbstractSyntaxTrees.CaseLiteralInteger;
+import Triangle.AbstractSyntaxTrees.CaseLiteralsSequenceMultiple;
+import Triangle.AbstractSyntaxTrees.CaseLiteralsSequenceSingle;
+import Triangle.AbstractSyntaxTrees.CaseRangeOne;
+import Triangle.AbstractSyntaxTrees.CaseRangeTwo;
+import Triangle.AbstractSyntaxTrees.CaseSequenceMultiple;
+import Triangle.AbstractSyntaxTrees.CaseSequenceSingle;
+import Triangle.AbstractSyntaxTrees.Cases;
 import Triangle.AbstractSyntaxTrees.CharTypeDenoter;
 import Triangle.AbstractSyntaxTrees.CharacterExpression;
 import Triangle.AbstractSyntaxTrees.CharacterLiteral;
@@ -21,8 +32,10 @@ import Triangle.AbstractSyntaxTrees.ConstActualParameter;
 import Triangle.AbstractSyntaxTrees.ConstDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstFormalParameter;
 import Triangle.AbstractSyntaxTrees.DotVname;
+import Triangle.AbstractSyntaxTrees.Elsif;
 import Triangle.AbstractSyntaxTrees.EmptyActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.EmptyCommand;
+import Triangle.AbstractSyntaxTrees.ElsifSequenceEmpty;
 import Triangle.AbstractSyntaxTrees.EmptyExpression;
 import Triangle.AbstractSyntaxTrees.EmptyFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.ErrorTypeDenoter;
@@ -37,8 +50,13 @@ import Triangle.AbstractSyntaxTrees.IntegerExpression;
 import Triangle.AbstractSyntaxTrees.IntegerLiteral;
 import Triangle.AbstractSyntaxTrees.LetCommand;
 import Triangle.AbstractSyntaxTrees.LetExpression;
+import Triangle.AbstractSyntaxTrees.LoopConditional;
+import Triangle.AbstractSyntaxTrees.LoopForCommand;
+import Triangle.AbstractSyntaxTrees.LoopPostDoCommand;
+import Triangle.AbstractSyntaxTrees.LoopPreDoCommand;
 import Triangle.AbstractSyntaxTrees.MultipleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleArrayAggregate;
+import Triangle.AbstractSyntaxTrees.ElsifSequenceMultiple;
 import Triangle.AbstractSyntaxTrees.MultipleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.MultipleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleRecordAggregate;
@@ -55,6 +73,7 @@ import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SimpleVname;
 import Triangle.AbstractSyntaxTrees.SingleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleArrayAggregate;
+import Triangle.AbstractSyntaxTrees.ElsifSequenceSingle;
 import Triangle.AbstractSyntaxTrees.SingleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
@@ -67,7 +86,6 @@ import Triangle.AbstractSyntaxTrees.VarDeclaration;
 import Triangle.AbstractSyntaxTrees.VarFormalParameter;
 import Triangle.AbstractSyntaxTrees.Visitor;
 import Triangle.AbstractSyntaxTrees.VnameExpression;
-import Triangle.AbstractSyntaxTrees.WhileCommand;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
@@ -101,7 +119,7 @@ public class TreeVisitor implements Visitor {
     }
     
     public Object visitIfCommand(IfCommand ast, Object obj) {
-        return(createTernary("If Command", ast.E, ast.C1, ast.C2));
+        return(createQuaternary("If Command", ast.E, ast.C1, ast.S, ast.C2));
     }
     
     public Object visitLetCommand(LetCommand ast, Object obj) {
@@ -112,8 +130,80 @@ public class TreeVisitor implements Visitor {
         return(createBinary("Sequential Command", ast.C1, ast.C2));
     }
     
-    public Object visitWhileCommand(WhileCommand ast, Object obj) {
-        return(createBinary("While Command", ast.E, ast.C));
+    public Object visitElsif(Elsif ast, Object obj) {
+        return(createBinary("Elsif", ast.E, ast.C));
+    }
+    
+    public Object visitElsifSequenceEmpty(ElsifSequenceEmpty ast, Object obj) {
+        return(createNullary("Empty Elsif"));
+    }
+    
+    public Object visitElsifSequenceSingle(ElsifSequenceSingle ast, Object obj) {
+        return(createUnary("Single Elsif", ast.E));
+    }
+    
+    public Object visitElsifSequenceMultiple(ElsifSequenceMultiple ast, Object obj) {
+        return(createBinary("Multiple Elsif", ast.E, ast.ES));
+    }
+    
+    public Object visitLoopConditional(LoopConditional ast, Object obj) {
+        return(createNullary(ast.spelling));
+    }
+    
+    public Object visitLoopPostDoCommand(LoopPostDoCommand ast, Object obj) {
+        return(createTernary("Loop Post Do", ast.LC, ast.E, ast.C));
+    }
+    
+    public Object visitLoopPreDoCommand(LoopPreDoCommand ast, Object obj) {
+        return(createTernary("Loop Pre Do", ast.C, ast.LC, ast.E));
+    }
+    
+    public Object visitLoopForCommand(LoopForCommand ast, Object obj) {
+        return(createQuaternary("Loop For", ast.identifier, ast.from, ast.to, ast.command));
+    }
+    
+    public Object visitCaseLiteralCharacter(CaseLiteralCharacter ast, Object obj) {
+        return(createUnary("Case Literal Char", ast.charLiteral));
+    }
+    
+    public Object visitCaseLiteralInteger(CaseLiteralInteger ast, Object obj) {
+        return(createUnary("Case Literal Int", ast.intLiteral));
+    }
+    
+    public Object visitCaseRangeOne(CaseRangeOne ast, Object obj) {
+        return(createUnary("Case Range One", ast.caseLiteral));
+    }
+    
+    public Object visitCaseRangeTwo(CaseRangeTwo ast, Object obj) {
+        return(createBinary("Case Range Two", ast.from, ast.to));
+    }
+    
+    public Object visitCaseLiteralsSequenceSingle(CaseLiteralsSequenceSingle ast, Object obj) {
+        return(createUnary("Single Case Literal", ast.caseRange));
+    }
+    
+    public Object visitCaseLiteralsSequenceMultiple(CaseLiteralsSequenceMultiple ast, Object obj) {
+        return(createBinary("Multiple Case Literals", ast.caseRange, ast.sequence));
+    }
+    
+    public Object visitCase(Case ast, Object obj) {
+        return(createBinary("Case", ast.caseLiterals, ast.command));
+    }
+    
+    public Object visitCaseSequenceSingle(CaseSequenceSingle ast, Object obj) {
+        return(createUnary("Single Case", ast.caseAST));
+    }
+    
+    public Object visitCaseSequenceMultiple(CaseSequenceMultiple ast, Object obj) {
+        return(createBinary("Multiple Cases", ast.caseAST, ast.sequence));
+    }
+    
+    public Object visitCases(Cases ast, Object obj) {
+        return(createBinary("Cases", ast.caseSequence, ast.elseCommand));
+    }
+    
+    public Object visitCaseCommand(CaseCommand ast, Object obj) {
+        return(createBinary("Case Command", ast.expression, ast.cases));
     }
     // </editor-fold>
     

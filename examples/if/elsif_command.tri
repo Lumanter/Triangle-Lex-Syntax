@@ -1,0 +1,11 @@
+if (n = 1) then 
+ a := 1
+elsif (n = 2) then 
+ b := 2
+elsif (n = 3) then 
+ c := 3
+elsif (n = 4) then 
+ c := 4
+else 
+ d := 5
+end
