@@ -57,7 +57,7 @@ public class IDECompiler {
         /// Archivo XML
         xmlDoc   = new XMLCreator(sourceName);
         xmlDoc.create(rootAST);    ////    Nuevo
-        
+        System.out.println("XML file created.");
         if (report.numErrors == 0) {
 //            System.out.println("Contextual Analysis ...");
 //            Checker checker = new Checker(report);

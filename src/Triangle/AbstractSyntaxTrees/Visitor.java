@@ -128,4 +128,21 @@ public interface Visitor {
   // Programs
   public abstract Object visitProgram(Program ast, Object o);
 
+  // New
+    public Object visitProcedureProcFuncDeclaration(ProcedureProcFuncDeclaration aThis, Object o);
+
+    public Object visitFunctionProcFuncDeclaration(FunctionProcFuncDeclaration aThis, Object o);
+
+    public Object visitPrivateCompoundDeclaration(PrivateCompoundDeclaration aThis, Object o);
+
+    public Object visitRecursiveCompoundDeclaration(RecursiveCompoundDeclaration aThis, Object o);
+
+    public Object visitProcFuncSDeclaration(ProcFuncSDeclaration aThis, Object o);
+
+    public Object visitExpressionVarDeclaration(ExpressionVarDeclaration aThis, Object o);
+
+    public Object visitCompoundDeclaration(CompoundDeclaration aThis, Object o);
+
+    public Object visitProcFuncDeclaration(ProcFuncDeclaration aThis, Object o);
+
 }

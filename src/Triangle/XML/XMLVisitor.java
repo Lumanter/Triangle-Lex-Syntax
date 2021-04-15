@@ -29,6 +29,7 @@ import Triangle.AbstractSyntaxTrees.Cases;
 import Triangle.AbstractSyntaxTrees.CharTypeDenoter;
 import Triangle.AbstractSyntaxTrees.CharacterExpression;
 import Triangle.AbstractSyntaxTrees.CharacterLiteral;
+import Triangle.AbstractSyntaxTrees.CompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstActualParameter;
 import Triangle.AbstractSyntaxTrees.ConstDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstFormalParameter;
@@ -42,9 +43,11 @@ import Triangle.AbstractSyntaxTrees.EmptyCommand;
 import Triangle.AbstractSyntaxTrees.EmptyExpression;
 import Triangle.AbstractSyntaxTrees.EmptyFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.ErrorTypeDenoter;
+import Triangle.AbstractSyntaxTrees.ExpressionVarDeclaration;
 import Triangle.AbstractSyntaxTrees.FuncActualParameter;
 import Triangle.AbstractSyntaxTrees.FuncDeclaration;
 import Triangle.AbstractSyntaxTrees.FuncFormalParameter;
+import Triangle.AbstractSyntaxTrees.FunctionProcFuncDeclaration;
 import Triangle.AbstractSyntaxTrees.Identifier;
 import Triangle.AbstractSyntaxTrees.IfCommand;
 import Triangle.AbstractSyntaxTrees.IfExpression;
@@ -63,12 +66,17 @@ import Triangle.AbstractSyntaxTrees.MultipleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.MultipleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleRecordAggregate;
 import Triangle.AbstractSyntaxTrees.Operator;
+import Triangle.AbstractSyntaxTrees.PrivateCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.ProcActualParameter;
 import Triangle.AbstractSyntaxTrees.ProcDeclaration;
 import Triangle.AbstractSyntaxTrees.ProcFormalParameter;
+import Triangle.AbstractSyntaxTrees.ProcFuncDeclaration;
+import Triangle.AbstractSyntaxTrees.ProcFuncSDeclaration;
+import Triangle.AbstractSyntaxTrees.ProcedureProcFuncDeclaration;
 import Triangle.AbstractSyntaxTrees.Program;
 import Triangle.AbstractSyntaxTrees.RecordExpression;
 import Triangle.AbstractSyntaxTrees.RecordTypeDenoter;
+import Triangle.AbstractSyntaxTrees.RecursiveCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.SequentialCommand;
 import Triangle.AbstractSyntaxTrees.SequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
@@ -225,6 +233,36 @@ public class XMLVisitor implements Visitor{
         return xmlBinary("VarDeclaration", ast.I, ast.T);
     }
 
+    @Override
+    public Object visitProcedureProcFuncDeclaration(ProcedureProcFuncDeclaration aThis, Object o) {
+        return (xmlTernary("ProcedureProcedure-FunctionDeclaration",aThis.I,aThis.F,aThis.C));
+    }
+
+    @Override
+    public Object visitFunctionProcFuncDeclaration(FunctionProcFuncDeclaration aThis, Object o) {
+        return (xmlQuaternary("FunctionProcedure-FunctionDeclaration",aThis.I,aThis.F,aThis.T,aThis.E));
+    }
+
+    @Override
+    public Object visitPrivateCompoundDeclaration(PrivateCompoundDeclaration aThis, Object o) {
+        return (xmlBinary("PrivateCompoundDeclaration",aThis.D1,aThis.D2));
+    }
+
+    @Override
+    public Object visitRecursiveCompoundDeclaration(RecursiveCompoundDeclaration aThis, Object o) {
+        return (xmlUnary("Recursive CompoundDeclaration",aThis.D1));
+    }
+
+    @Override
+    public Object visitProcFuncSDeclaration(ProcFuncSDeclaration aThis, Object o) {
+        return (xmlBinary("Procedures-FunctionsDeclaration",aThis.D1,aThis.D2));
+    }
+
+    @Override
+    public Object visitExpressionVarDeclaration(ExpressionVarDeclaration aThis, Object o) {
+        return (xmlBinary("ExpressionVariableDeclaration",aThis.I,aThis.E));
+    }
+    
     //// Array Aggregates
     @Override
     public Object visitMultipleArrayAggregate(MultipleArrayAggregate ast, Object o) {
@@ -462,104 +500,109 @@ public class XMLVisitor implements Visitor{
         //attachParent(xm_Top);
         return xm_Top;
     }
-    
-    private void attachParent(XMLTree x){
-        //
-        
-    }
 
     @Override
     public Object visitElsif(Elsif ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return xmlBinary("ElseIfExpression", ast.E, ast.C);
     }
 
     @Override
     public Object visitElsifSequenceEmpty(ElsifSequenceEmpty ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return xmlNullary("EmptyElseIfSequence"); 
     }
 
     @Override
-    public Object visitElsifSequenceSingle(ElsifSequenceSingle ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Object visitElsifSequenceSingle(ElsifSequenceSingle ast, Object o){
+        return xmlUnary("SingleElseIfSequence", ast.E);
     }
 
     @Override
     public Object visitElsifSequenceMultiple(ElsifSequenceMultiple ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return xmlBinary("MultipleElseIfSequence", ast.E, ast.ES); 
     }
 
     @Override
     public Object visitLoopConditional(LoopConditional ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return xmlNullary(ast.spelling);
     }
 
     @Override
     public Object visitLoopPostDoCommand(LoopPostDoCommand ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return xmlTernary("LoopPostDoCommand", ast.LC, ast.E, ast.C);
     }
 
     @Override
     public Object visitLoopPreDoCommand(LoopPreDoCommand ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return xmlTernary("LoopPreDoCommand",ast.C,ast.LC,ast.E);
     }
 
     @Override
     public Object visitLoopForCommand(LoopForCommand ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return xmlQuaternary("LoopForCommand",ast.identifier,ast.from,ast.to,ast.command);
     }
 
     @Override
     public Object visitCaseLiteralCharacter(CaseLiteralCharacter ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return xmlUnary("CaseLiteralCharacter",ast.charLiteral);
     }
 
     @Override
     public Object visitCaseLiteralInteger(CaseLiteralInteger ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return xmlUnary("CaseLiteralInteger",ast.intLiteral);
     }
 
     @Override
     public Object visitCaseRangeOne(CaseRangeOne ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return xmlUnary("CaseRangeOne",ast.caseLiteral);
     }
 
     @Override
     public Object visitCaseRangeTwo(CaseRangeTwo ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return xmlBinary("CaseRangeTwo",ast.from,ast.to);
     }
 
     @Override
     public Object visitCaseLiteralsSequenceSingle(CaseLiteralsSequenceSingle ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return xmlUnary("CaseLiteralSequenceSingle",ast.caseRange);
     }
 
     @Override
     public Object visitCaseLiteralsSequenceMultiple(CaseLiteralsSequenceMultiple ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return xmlBinary("CaseLiteralSequenceMultiple",ast.caseRange,ast.sequence);
     }
 
     @Override
     public Object visitCase(Case ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return xmlBinary("Case",ast.caseLiterals,ast.command);
     }
 
     @Override
     public Object visitCaseSequenceSingle(CaseSequenceSingle ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return xmlUnary("CaseSequenceSingle",ast.caseAST);
     }
 
     @Override
     public Object visitCaseSequenceMultiple(CaseSequenceMultiple ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return xmlBinary("CaseSequenceMultiple",ast.caseAST,ast.sequence);
     }
 
     @Override
     public Object visitCases(Cases ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return xmlBinary("Cases",ast.caseSequence,ast.elseCommand);
     }
 
     @Override
     public Object visitCaseCommand(CaseCommand ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return xmlBinary("CaseCommand",ast.expression,ast.cases);
+    }
+
+    @Override
+    public Object visitCompoundDeclaration(CompoundDeclaration aThis, Object o) {
+        return xmlNullary("CompoundDeclaration");
+    }
+
+    @Override
+    public Object visitProcFuncDeclaration(ProcFuncDeclaration aThis, Object o) {
+        return xmlNullary("ProcFuncDeclaration");
     }
 }
