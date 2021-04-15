@@ -1027,6 +1027,7 @@ public class Parser {
                 finish(declarationPos);
                 declarationAST = new ExpressionVarDeclaration(iAST, eAST, declarationPos);
             }
+            break;
             default:
                 syntacticError("\"%\" cannot start a declaration",
                     currentToken.spelling);
