@@ -1,0 +1,4 @@
+if (num > 0) then 
+ sign := '>'
+else 
+ sign := '<'
