@@ -28,6 +28,7 @@ import Triangle.AbstractSyntaxTrees.Cases;
 import Triangle.AbstractSyntaxTrees.CharTypeDenoter;
 import Triangle.AbstractSyntaxTrees.CharacterExpression;
 import Triangle.AbstractSyntaxTrees.CharacterLiteral;
+import Triangle.AbstractSyntaxTrees.CompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstActualParameter;
 import Triangle.AbstractSyntaxTrees.ConstDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstFormalParameter;
@@ -39,9 +40,11 @@ import Triangle.AbstractSyntaxTrees.ElsifSequenceEmpty;
 import Triangle.AbstractSyntaxTrees.EmptyExpression;
 import Triangle.AbstractSyntaxTrees.EmptyFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.ErrorTypeDenoter;
+import Triangle.AbstractSyntaxTrees.ExpressionVarDeclaration;
 import Triangle.AbstractSyntaxTrees.FuncActualParameter;
 import Triangle.AbstractSyntaxTrees.FuncDeclaration;
 import Triangle.AbstractSyntaxTrees.FuncFormalParameter;
+import Triangle.AbstractSyntaxTrees.FunctionProcFuncDeclaration;
 import Triangle.AbstractSyntaxTrees.Identifier;
 import Triangle.AbstractSyntaxTrees.IfCommand;
 import Triangle.AbstractSyntaxTrees.IfExpression;
@@ -61,12 +64,16 @@ import Triangle.AbstractSyntaxTrees.MultipleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.MultipleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleRecordAggregate;
 import Triangle.AbstractSyntaxTrees.Operator;
+import Triangle.AbstractSyntaxTrees.PrivateCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.ProcActualParameter;
 import Triangle.AbstractSyntaxTrees.ProcDeclaration;
 import Triangle.AbstractSyntaxTrees.ProcFormalParameter;
+import Triangle.AbstractSyntaxTrees.ProcFuncSDeclaration;
+import Triangle.AbstractSyntaxTrees.ProcedureProcFuncDeclaration;
 import Triangle.AbstractSyntaxTrees.Program;
 import Triangle.AbstractSyntaxTrees.RecordExpression;
 import Triangle.AbstractSyntaxTrees.RecordTypeDenoter;
+import Triangle.AbstractSyntaxTrees.RecursiveCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.SequentialCommand;
 import Triangle.AbstractSyntaxTrees.SequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
@@ -74,6 +81,7 @@ import Triangle.AbstractSyntaxTrees.SimpleVname;
 import Triangle.AbstractSyntaxTrees.SingleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleArrayAggregate;
 import Triangle.AbstractSyntaxTrees.ElsifSequenceSingle;
+import Triangle.AbstractSyntaxTrees.ProcFuncDeclaration;
 import Triangle.AbstractSyntaxTrees.SingleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
@@ -286,6 +294,47 @@ public class TreeVisitor implements Visitor {
     
     public Object visitVarDeclaration(VarDeclaration ast, Object obj) {
         return(createBinary("Variable Declaration", ast.I, ast.T));
+    }
+    
+    //////// Nuevos
+    @Override
+    public Object visitProcedureProcFuncDeclaration(ProcedureProcFuncDeclaration aThis, Object o) {
+        return (createTernary("Procedure Procedure-Function Declaration",aThis.I,aThis.F,aThis.C));
+    }
+
+    @Override
+    public Object visitFunctionProcFuncDeclaration(FunctionProcFuncDeclaration aThis, Object o) {
+        return (createQuaternary("Function Procedure-Function Declaration",aThis.I,aThis.F,aThis.T,aThis.E));
+    }
+
+    @Override
+    public Object visitPrivateCompoundDeclaration(PrivateCompoundDeclaration aThis, Object o) {
+        return (createBinary("Private Compound Declaration",aThis.D1,aThis.D2));
+    }
+
+    @Override
+    public Object visitRecursiveCompoundDeclaration(RecursiveCompoundDeclaration aThis, Object o) {
+        return (createUnary("Recursive Compound Declaration",aThis.D1));
+    }
+
+    @Override
+    public Object visitProcFuncSDeclaration(ProcFuncSDeclaration aThis, Object o) {
+        return (createBinary("Procedures-Functions Declaration",aThis.D1,aThis.D2));
+    }
+
+    @Override
+    public Object visitExpressionVarDeclaration(ExpressionVarDeclaration aThis, Object o) {
+        return (createBinary("Expression Variable Declaration",aThis.I,aThis.E));
+    }
+    
+    @Override
+    public Object visitCompoundDeclaration(CompoundDeclaration aThis, Object o) {
+        return createNullary("Compound Declaration");
+    }
+
+    @Override
+    public Object visitProcFuncDeclaration(ProcFuncDeclaration aThis, Object o) {
+        return createNullary("Proc Func Declaration");
     }
     // </editor-fold>
     
@@ -527,4 +576,6 @@ public class TreeVisitor implements Visitor {
         return(t);             
     }
     // </editor-fold>
+
+    
 }

@@ -40,6 +40,7 @@ import Triangle.AbstractSyntaxTrees.Cases;
 import Triangle.AbstractSyntaxTrees.CharTypeDenoter;
 import Triangle.AbstractSyntaxTrees.CharacterExpression;
 import Triangle.AbstractSyntaxTrees.CharacterLiteral;
+import Triangle.AbstractSyntaxTrees.CompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstActualParameter;
 import Triangle.AbstractSyntaxTrees.ConstDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstFormalParameter;
@@ -51,9 +52,11 @@ import Triangle.AbstractSyntaxTrees.ElsifSequenceEmpty;
 import Triangle.AbstractSyntaxTrees.EmptyExpression;
 import Triangle.AbstractSyntaxTrees.EmptyFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.ErrorTypeDenoter;
+import Triangle.AbstractSyntaxTrees.ExpressionVarDeclaration;
 import Triangle.AbstractSyntaxTrees.FuncActualParameter;
 import Triangle.AbstractSyntaxTrees.FuncDeclaration;
 import Triangle.AbstractSyntaxTrees.FuncFormalParameter;
+import Triangle.AbstractSyntaxTrees.FunctionProcFuncDeclaration;
 import Triangle.AbstractSyntaxTrees.Identifier;
 import Triangle.AbstractSyntaxTrees.IfCommand;
 import Triangle.AbstractSyntaxTrees.IfExpression;
@@ -73,12 +76,16 @@ import Triangle.AbstractSyntaxTrees.MultipleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.MultipleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.MultipleRecordAggregate;
 import Triangle.AbstractSyntaxTrees.Operator;
+import Triangle.AbstractSyntaxTrees.PrivateCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.ProcActualParameter;
 import Triangle.AbstractSyntaxTrees.ProcDeclaration;
 import Triangle.AbstractSyntaxTrees.ProcFormalParameter;
+import Triangle.AbstractSyntaxTrees.ProcFuncSDeclaration;
+import Triangle.AbstractSyntaxTrees.ProcedureProcFuncDeclaration;
 import Triangle.AbstractSyntaxTrees.Program;
 import Triangle.AbstractSyntaxTrees.RecordExpression;
 import Triangle.AbstractSyntaxTrees.RecordTypeDenoter;
+import Triangle.AbstractSyntaxTrees.RecursiveCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.SequentialCommand;
 import Triangle.AbstractSyntaxTrees.SequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
@@ -86,6 +93,7 @@ import Triangle.AbstractSyntaxTrees.SimpleVname;
 import Triangle.AbstractSyntaxTrees.SingleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleArrayAggregate;
 import Triangle.AbstractSyntaxTrees.ElsifSequenceSingle;
+import Triangle.AbstractSyntaxTrees.ProcFuncDeclaration;
 import Triangle.AbstractSyntaxTrees.SingleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
@@ -159,7 +167,7 @@ public class LayoutVisitor implements Visitor {
   }
   
   public Object visitLoopPostDoCommand(LoopPostDoCommand ast, Object obj) {
-    return layoutTernary("LoopP.D.", ast.LC, ast.E, ast.C);
+    return layoutTernary("LoopPostDoComm.", ast.LC, ast.E, ast.C);
   }
   
   // Expressions
@@ -241,6 +249,35 @@ public class LayoutVisitor implements Visitor {
     return layoutBinary("VarDecl.", ast.I, ast.T);
   }
 
+  @Override
+    public Object visitProcedureProcFuncDeclaration(ProcedureProcFuncDeclaration aThis, Object o) {
+        return (layoutTernary("Proc.Proc-Func.Decl.",aThis.I,aThis.F,aThis.C));
+    }
+
+    @Override
+    public Object visitFunctionProcFuncDeclaration(FunctionProcFuncDeclaration aThis, Object o) {
+        return (layoutQuaternary("Func.Proc-Func.Decl.",aThis.I,aThis.F,aThis.T,aThis.E));
+    }
+
+    @Override
+    public Object visitPrivateCompoundDeclaration(PrivateCompoundDeclaration aThis, Object o) {
+        return (layoutBinary("Priv.Comp.Decl.",aThis.D1,aThis.D2));
+    }
+
+    @Override
+    public Object visitRecursiveCompoundDeclaration(RecursiveCompoundDeclaration aThis, Object o) {
+        return (layoutUnary("Rec.Comp.Decl.",aThis.D1));
+    }
+
+    @Override
+    public Object visitProcFuncSDeclaration(ProcFuncSDeclaration aThis, Object o) {
+        return (layoutBinary("ProcsFuncs.Decl.",aThis.D1,aThis.D2));
+    }
+
+    @Override
+    public Object visitExpressionVarDeclaration(ExpressionVarDeclaration aThis, Object o) {
+        return (layoutBinary("Expr.Var.Decl.",aThis.I,aThis.E));
+    }
 
   // Array Aggregates
   public Object visitMultipleArrayAggregate(MultipleArrayAggregate ast, Object obj) {
@@ -585,66 +622,76 @@ public class LayoutVisitor implements Visitor {
   
   @Override
     public Object visitLoopPreDoCommand(LoopPreDoCommand ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return layoutTernary("LoopPreDoComm.",ast.C,ast.LC,ast.E);
     }
     
     @Override
     public Object visitLoopForCommand(LoopForCommand ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return layoutQuaternary("LoopForComm.",ast.identifier,ast.from,ast.to,ast.command);
     }
     
     @Override
     public Object visitCaseLiteralCharacter(CaseLiteralCharacter ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return layoutUnary("CaseLit.Char.",ast.charLiteral);
     }
 
     @Override
     public Object visitCaseLiteralInteger(CaseLiteralInteger ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return layoutUnary("CaseLit.Int.",ast.intLiteral);
     }
     
     @Override
     public Object visitCaseRangeOne(CaseRangeOne ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return layoutUnary("CaseRng.One",ast.caseLiteral);
     }
 
     @Override
     public Object visitCaseRangeTwo(CaseRangeTwo ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return layoutBinary("CaseRng.Two",ast.from,ast.to);
     }
     
     @Override
     public Object visitCaseLiteralsSequenceSingle(CaseLiteralsSequenceSingle ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return layoutUnary("CaseLit.Seq.Sing.",ast.caseRange);
     }
 
     @Override
     public Object visitCaseLiteralsSequenceMultiple(CaseLiteralsSequenceMultiple ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return layoutBinary("CaseLit.Seq.Mult.",ast.caseRange,ast.sequence);
     }
 
     @Override
     public Object visitCase(Case ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return layoutBinary("Case",ast.caseLiterals,ast.command);
     }
     
     @Override
     public Object visitCaseSequenceSingle(CaseSequenceSingle ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return layoutUnary("CaseSeq.Sing.",ast.caseAST);
     }
 
     @Override
     public Object visitCaseSequenceMultiple(CaseSequenceMultiple ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return layoutBinary("CaseSeq.Mult.",ast.caseAST,ast.sequence);
     }
     
     @Override
     public Object visitCases(Cases ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return layoutBinary("Cases",ast.caseSequence,ast.elseCommand);
     }
     
     @Override
     public Object visitCaseCommand(CaseCommand ast, Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return layoutBinary("CaseComm.",ast.expression,ast.cases);
+    }
+
+    @Override
+    public Object visitCompoundDeclaration(CompoundDeclaration aThis, Object o) {
+        return layoutNullary("Comp.Declaration");
+    }
+
+    @Override
+    public Object visitProcFuncDeclaration(ProcFuncDeclaration aThis, Object o) {
+        return layoutNullary("Proc.Func.Decl.");
     }
 }
