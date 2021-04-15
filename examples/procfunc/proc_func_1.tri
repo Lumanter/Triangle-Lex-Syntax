@@ -1,0 +1,8 @@
+let
+	recursive 
+		proc iden1 () ~ nothing end |
+		func iden2 () : int ~ 8
+end
+in
+	nothing
+end

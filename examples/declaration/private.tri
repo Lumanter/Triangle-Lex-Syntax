@@ -1,0 +1,5 @@
+let 
+	private var c:int in const z~7 end
+in 
+	nothing
+end

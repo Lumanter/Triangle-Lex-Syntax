@@ -1,0 +1,7 @@
+let
+	recursive
+		proc iden1 () ~ nothing end 
+	end
+in
+	nothing
+end

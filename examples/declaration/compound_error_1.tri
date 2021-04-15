@@ -1,0 +1,7 @@
+let 
+	var x:int;
+	private const c~1 in const d~2 end;
+	x:= 0
+in 
+	x := x + y
+end

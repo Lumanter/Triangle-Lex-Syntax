@@ -54,11 +54,12 @@ public class IDECompiler {
         
         rootAST = parser.parseProgram();
         
-        /// Archivo XML
-        xmlDoc   = new XMLCreator(sourceName);
-        xmlDoc.create(rootAST);    ////    Nuevo
-        System.out.println("XML file created.");
+        
         if (report.numErrors == 0) {
+            /// Archivo XML
+            xmlDoc   = new XMLCreator(sourceName);
+            xmlDoc.create(rootAST);    ////    Nuevo
+            System.out.println("XML file created.");
 //            System.out.println("Contextual Analysis ...");
 //            Checker checker = new Checker(report);
 //            checker.check(rootAST);

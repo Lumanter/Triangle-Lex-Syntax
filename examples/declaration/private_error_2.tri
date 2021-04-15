@@ -1,0 +1,5 @@
+let
+	private var x:int in numero:= 10 end
+in
+	nothing
+end
