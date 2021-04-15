@@ -39,6 +39,7 @@ import Triangle.AbstractSyntaxTrees.Cases;
 import Triangle.AbstractSyntaxTrees.CharTypeDenoter;
 import Triangle.AbstractSyntaxTrees.CharacterExpression;
 import Triangle.AbstractSyntaxTrees.CharacterLiteral;
+import Triangle.AbstractSyntaxTrees.CompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstActualParameter;
 import Triangle.AbstractSyntaxTrees.ConstDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstFormalParameter;
@@ -89,6 +90,13 @@ import Triangle.AbstractSyntaxTrees.SimpleVname;
 import Triangle.AbstractSyntaxTrees.SingleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleArrayAggregate;
 import Triangle.AbstractSyntaxTrees.ElsifSequenceSingle;
+import Triangle.AbstractSyntaxTrees.ExpressionVarDeclaration;
+import Triangle.AbstractSyntaxTrees.FunctionProcFuncDeclaration;
+import Triangle.AbstractSyntaxTrees.PrivateCompoundDeclaration;
+import Triangle.AbstractSyntaxTrees.ProcFuncDeclaration;
+import Triangle.AbstractSyntaxTrees.ProcFuncSDeclaration;
+import Triangle.AbstractSyntaxTrees.ProcedureProcFuncDeclaration;
+import Triangle.AbstractSyntaxTrees.RecursiveCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.SingleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
@@ -1042,6 +1050,46 @@ public final class Checker implements Visitor {
 
     @Override
     public Object visitCaseCommand(CaseCommand ast, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitProcedureProcFuncDeclaration(ProcedureProcFuncDeclaration aThis, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitFunctionProcFuncDeclaration(FunctionProcFuncDeclaration aThis, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitPrivateCompoundDeclaration(PrivateCompoundDeclaration aThis, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitRecursiveCompoundDeclaration(RecursiveCompoundDeclaration aThis, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitProcFuncSDeclaration(ProcFuncSDeclaration aThis, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitExpressionVarDeclaration(ExpressionVarDeclaration aThis, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitCompoundDeclaration(CompoundDeclaration aThis, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitProcFuncDeclaration(ProcFuncDeclaration aThis, Object o) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

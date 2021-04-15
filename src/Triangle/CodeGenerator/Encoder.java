@@ -47,6 +47,7 @@ import Triangle.AbstractSyntaxTrees.Cases;
 import Triangle.AbstractSyntaxTrees.CharTypeDenoter;
 import Triangle.AbstractSyntaxTrees.CharacterExpression;
 import Triangle.AbstractSyntaxTrees.CharacterLiteral;
+import Triangle.AbstractSyntaxTrees.CompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstActualParameter;
 import Triangle.AbstractSyntaxTrees.ConstDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstFormalParameter;
@@ -97,6 +98,7 @@ import Triangle.AbstractSyntaxTrees.ElsifSequenceSingle;
 import Triangle.AbstractSyntaxTrees.ExpressionVarDeclaration;
 import Triangle.AbstractSyntaxTrees.FunctionProcFuncDeclaration;
 import Triangle.AbstractSyntaxTrees.PrivateCompoundDeclaration;
+import Triangle.AbstractSyntaxTrees.ProcFuncDeclaration;
 import Triangle.AbstractSyntaxTrees.ProcFuncSDeclaration;
 import Triangle.AbstractSyntaxTrees.ProcedureProcFuncDeclaration;
 import Triangle.AbstractSyntaxTrees.RecursiveCompoundDeclaration;
@@ -1129,6 +1131,16 @@ public final class Encoder implements Visitor {
 
     @Override
     public Object visitExpressionVarDeclaration(ExpressionVarDeclaration aThis, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitCompoundDeclaration(CompoundDeclaration aThis, Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Object visitProcFuncDeclaration(ProcFuncDeclaration aThis, Object o) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

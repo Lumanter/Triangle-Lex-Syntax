@@ -1,0 +1,5 @@
+let
+	private variable:=10 in x:int end
+in
+	nothing
+end
