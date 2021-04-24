@@ -17,7 +17,8 @@ package Triangle.AbstractSyntaxTrees;
 public interface Visitor {
   
   //Packages
-  public abstract Object visitPackageIdentifier(PackageIdentifier ast, Object o);
+  public abstract Object visitPackageIdentifierSimple(PackageIdentifierSimple ast, Object o);
+  public abstract Object visitPackageIdentifierEmpty(PackageIdentifierEmpty ast, Object o);
   public abstract Object visitPackageCallDeclaration(PackageCallDeclaration ast, Object o);
   public abstract Object visitPackageSequentialDeclaration(PackageSequentialDeclaration ast, Object o);
   public abstract Object visitPackageEmptyDeclaration(PackageEmptyDeclaration ast, Object o);

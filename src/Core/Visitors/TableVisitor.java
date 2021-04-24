@@ -105,7 +105,8 @@ import Triangle.CodeGenerator.UnknownValue;
 import javax.swing.table.DefaultTableModel;
 
 //<Import Packages Clases>
-import Triangle.AbstractSyntaxTrees.PackageIdentifier;
+import Triangle.AbstractSyntaxTrees.PackageIdentifierSimple;
+import Triangle.AbstractSyntaxTrees.PackageIdentifierEmpty;
 
 import Triangle.AbstractSyntaxTrees.PackageCallDeclaration;
 import Triangle.AbstractSyntaxTrees.PackageSequentialDeclaration;
@@ -130,11 +131,17 @@ public class TableVisitor implements Visitor {
     }
     
   //<editor-fold defaultstate="collapsed" desc=" Packages ">
-    public Object visitPackageIdentifier(PackageIdentifier ast, Object o) { 
+    public Object visitPackageIdentifierSimple(PackageIdentifierSimple ast, Object o) { 
       ast.I.visit(this, null);
       
       return(null);
     }
+    
+    public Object visitPackageIdentifierEmpty(PackageIdentifierEmpty ast, Object o) { 
+      
+      return(null);
+    }
+    
     public Object visitPackageCallDeclaration(PackageCallDeclaration ast, Object o) { 
       ast.PI.visit(this, null);
       ast.D.visit(this, null);

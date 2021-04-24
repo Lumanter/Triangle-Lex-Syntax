@@ -9,16 +9,20 @@ import Triangle.SyntacticAnalyzer.SourcePosition;
  *
  * @author karol
  */
-public abstract class PackageIdentifier extends AST{
+public class PackageIdentifierSimple extends PackageIdentifier{
     
     //Fields
-    
+    public Identifier I;
     
     //Constructor
-    public PackageIdentifier(SourcePosition thePosition) {
+    public PackageIdentifierSimple(Identifier identifier, SourcePosition thePosition) {
         super(thePosition);
-      
+        
+        this.I = identifier;
     }
     
     //Visitor
+    public Object visit(Visitor v, Object o) {
+    return v.visitPackageIdentifierSimple(this, o);
+    }
 }

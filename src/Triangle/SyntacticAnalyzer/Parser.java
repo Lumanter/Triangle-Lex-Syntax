@@ -115,11 +115,16 @@ import Triangle.AbstractSyntaxTrees.VnameExpression;
 
 //<Import Packages Clases>
 import Triangle.AbstractSyntaxTrees.PackageIdentifier;
+import Triangle.AbstractSyntaxTrees.PackageIdentifierSimple;
+import Triangle.AbstractSyntaxTrees.PackageIdentifierEmpty;
 
 import Triangle.AbstractSyntaxTrees.PackageDeclaration;
 import Triangle.AbstractSyntaxTrees.PackageCallDeclaration;
 import Triangle.AbstractSyntaxTrees.PackageSequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.PackageEmptyDeclaration;
+
+//<Import Long Identifier>
+import Triangle.AbstractSyntaxTrees.LongIdentifier;
 
 
 public class Parser {
@@ -253,7 +258,7 @@ public class Parser {
   // <editor-fold defaultstate="collapsed" desc=" Packages ">
   
   
-  public PackageDeclaration parsePackageDeclaration() throws SyntaxError{
+  PackageDeclaration parsePackageDeclaration() throws SyntaxError{
       
      //Init PackageDeclaration AST
      PackageDeclaration packageAST = null;
@@ -277,7 +282,7 @@ public class Parser {
      return packageAST;
   }
   
-  public PackageIdentifier parsePackageIdentifier()throws SyntaxError{
+  PackageIdentifier parsePackageIdentifier()throws SyntaxError{
       
       //Init PackageIdentifier AST
       PackageIdentifier packageIdentifierAST = null;
@@ -291,7 +296,7 @@ public class Parser {
       finish(packageIdenPosition);
       
       //Create PackageIdentifier AST
-      packageIdentifierAST = new PackageIdentifier(identifierAST, packageIdenPosition);
+      packageIdentifierAST = new PackageIdentifierSimple(identifierAST, packageIdenPosition);
       
       //Return PackageIndetifier AST
       return packageIdentifierAST;
@@ -340,7 +345,44 @@ public class Parser {
     }
     return CL;
   }
-
+  
+ 
+  LongIdentifier parseLongIdentifier()throws SyntaxError{
+      
+      //Init LongIdentifier AST
+      LongIdentifier longIdentifierAST = null;
+      
+      //Start Position Couting
+      SourcePosition longIdenPosition = new SourcePosition();
+      start(longIdenPosition);
+      
+      //Parse Productions
+      Identifier tempIdentifierAST = parseIdentifier();
+      
+      if(currentToken.kind == Token.DOLAR){
+          
+          acceptIt();
+          PackageIdentifier packageIdentifierAST = new PackageIdentifierSimple(tempIdentifierAST, longIdenPosition);
+          Identifier identifierAST = parseIdentifier();
+          
+          //Create LongIdentifier AST
+          longIdentifierAST = new LongIdentifier(packageIdentifierAST, identifierAST, longIdenPosition);
+          
+      }else{
+          
+          PackageIdentifier tempPackageIdentifier = new PackageIdentifierEmpty(longIdenPosition);
+          
+          //Create LongIdentifier AST
+          longIdentifierAST = new LongIdentifier(tempPackageIdentifier, tempIdentifierAST, longIdenPosition);
+      }
+      
+      finish(longIdenPosition);
+      
+      
+      //Return LongIdentifier AST
+      return longIdentifierAST;
+  }
+  
 // parseIdentifier parses an identifier, and constructs a leaf AST to
 // represent it.
 
