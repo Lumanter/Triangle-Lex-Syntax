@@ -456,7 +456,7 @@ public class Parser {
 
     case Token.IDENTIFIER:
       {
-        Identifier iAST = parseIdentifier();
+        LongIdentifier iAST = parseLongIdentifier();
         if (currentToken.kind == Token.LPAREN) {
           acceptIt();
           ActualParameterSequence apsAST = parseActualParameterSequence();
@@ -466,7 +466,7 @@ public class Parser {
 
         } else {
 
-          Vname vAST = parseRestOfVname(iAST);
+          Vname vAST = parseRestOfVname(iAST.I);
           accept(Token.BECOMES);
           Expression eAST = parseExpression();
           finish(commandPos);
@@ -979,7 +979,7 @@ public class Parser {
 
     case Token.IDENTIFIER:
       {
-        Identifier iAST= parseIdentifier();
+        LongIdentifier iAST= parseLongIdentifier();
         if (currentToken.kind == Token.LPAREN) {
           acceptIt();
           ActualParameterSequence apsAST = parseActualParameterSequence();
@@ -988,7 +988,7 @@ public class Parser {
           expressionAST = new CallExpression(iAST, apsAST, expressionPos);
 
         } else {
-          Vname vAST = parseRestOfVname(iAST);
+          Vname vAST = parseRestOfVname(iAST.I);
           finish(expressionPos);
           expressionAST = new VnameExpression(vAST, expressionPos);
         }
