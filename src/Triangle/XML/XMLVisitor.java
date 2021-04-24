@@ -480,7 +480,7 @@ public class XMLVisitor implements Visitor{
     ////Programa
     @Override
     public Object visitProgram(Program ast, Object o) {
-        return xmlUnary("Program", ast.C);
+        return xmlBinary("Program",ast.PD , ast.C);
     }
     
     private XMLTree xmlCaption(String name){

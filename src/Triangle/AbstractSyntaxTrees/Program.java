@@ -17,15 +17,23 @@ package Triangle.AbstractSyntaxTrees;
 import Triangle.SyntacticAnalyzer.SourcePosition;
 
 public class Program extends AST {
-
-  public Program (Command cAST, SourcePosition thePosition) {
-    super (thePosition);
-    C = cAST;
+    
+  //Fields
+  public Command C;
+  public PackageDeclaration PD;
+  
+  //Constructor
+  public Program (PackageDeclaration packageDeclaration, Command cAST, SourcePosition thePosition) {
+   super (thePosition);
+    
+    this.C = cAST;
+    this.PD = packageDeclaration;
   }
-
+  
+  //Visitor
   public Object visit(Visitor v, Object o) {
     return v.visitProgram(this, o);
   }
 
-  public Command C;
+  
 }

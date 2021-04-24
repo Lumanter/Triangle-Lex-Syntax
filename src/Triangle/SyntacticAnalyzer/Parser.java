@@ -113,6 +113,14 @@ import Triangle.AbstractSyntaxTrees.VarFormalParameter;
 import Triangle.AbstractSyntaxTrees.Vname;
 import Triangle.AbstractSyntaxTrees.VnameExpression;
 
+//<Import Packages Clases>
+import Triangle.AbstractSyntaxTrees.PackageIdentifier;
+
+import Triangle.AbstractSyntaxTrees.PackageDeclaration;
+import Triangle.AbstractSyntaxTrees.PackageCallDeclaration;
+import Triangle.AbstractSyntaxTrees.PackageSequentialDeclaration;
+import Triangle.AbstractSyntaxTrees.PackageEmptyDeclaration;
+
 
 public class Parser {
 
@@ -182,17 +190,115 @@ public class Parser {
     currentToken = lexicalAnalyser.scan();
 
     try {
-      Command cAST = parseCommand();
-      programAST = new Program(cAST, previousTokenPosition);
+        
+        
+      SourcePosition programPosition = new SourcePosition();
+        start(programPosition);
+        
+        //Parse Pacakages
+        PackageDeclaration packageAST = null;
+        
+        switch(currentToken.kind){
+            
+            case Token.PACKAGE:
+                
+                while(currentToken.kind == Token.PACKAGE){
+            
+                    if(packageAST == null){
+
+                        packageAST = parsePackageDeclaration();
+
+                    }else{
+
+                        PackageDeclaration tempPackageDeclaration = parsePackageDeclaration();
+                        packageAST = new PackageSequentialDeclaration(packageAST, tempPackageDeclaration, programPosition);
+                    }
+            
+                    accept(Token.SEMICOLON);
+                }
+                break;
+                
+            default:
+                
+                packageAST = new PackageEmptyDeclaration(programPosition);
+                
+                break;
+        }
+        finish(programPosition);
+        
+        //Parse Command
+        Command cAST = parseCommand();
+        
+        //Create AST
+        programAST = new Program(packageAST, cAST, previousTokenPosition);
+      
+      
+      
+      
       if (currentToken.kind != Token.EOT) {
         syntacticError("\"%\" not expected after end of program",
           currentToken.spelling);
       }
+      
+      
     }
     catch (SyntaxError s) { return null; }
     return programAST;
   }
-
+///////////////////////////////////////////////////////////////////////////////
+//
+// PACKAGES
+//
+///////////////////////////////////////////////////////////////////////////////
+  // <editor-fold defaultstate="collapsed" desc=" Packages ">
+  
+  
+  public PackageDeclaration parsePackageDeclaration() throws SyntaxError{
+      
+     //Init PackageDeclaration AST
+     PackageDeclaration packageAST = null;
+     
+     //Start Position Counting
+     SourcePosition packagePos = new SourcePosition();
+     start(packagePos);
+     
+     //Parse Productions
+     accept(Token.PACKAGE);
+     PackageIdentifier packageIdentifierAST = parsePackageIdentifier();
+     accept(Token.IS);
+     Declaration declarationAST = parseDeclaration();
+     accept(Token.END);
+     finish(packagePos);
+     
+     //Create PackageDeclaration AST
+     packageAST = new PackageCallDeclaration(packageIdentifierAST, declarationAST, packagePos);
+     
+     //Returns AST
+     return packageAST;
+  }
+  
+  public PackageIdentifier parsePackageIdentifier()throws SyntaxError{
+      
+      //Init PackageIdentifier AST
+      PackageIdentifier packageIdentifierAST = null;
+      
+      //Start Position Counting
+      SourcePosition packageIdenPosition = new SourcePosition();
+      start(packageIdenPosition);
+      
+      //Parse Productions
+      Identifier identifierAST = parseIdentifier();
+      finish(packageIdenPosition);
+      
+      //Create PackageIdentifier AST
+      packageIdentifierAST = new PackageIdentifier(identifierAST, packageIdenPosition);
+      
+      //Return PackageIndetifier AST
+      return packageIdentifierAST;
+  }
+  
+  // </editor-fold> 
+  
 ///////////////////////////////////////////////////////////////////////////////
 //
 // LITERALS

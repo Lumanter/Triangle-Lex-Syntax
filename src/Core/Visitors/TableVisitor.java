@@ -657,6 +657,7 @@ public class TableVisitor implements Visitor {
   // Programs
   public Object visitProgram(Program ast, Object o) { 
       ast.C.visit(this, null);
+      ast.PD.visit(this, null);
       
       return(null);
   }

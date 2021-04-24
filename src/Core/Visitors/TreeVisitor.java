@@ -526,7 +526,7 @@ public class TreeVisitor implements Visitor {
     }
     
     public Object visitProgram(Program ast, Object obj) {
-        return(createUnary("Program", ast.C));
+        return(createBinary("Program",ast.PD , ast.C));
     }
     // </editor-fold>
 
