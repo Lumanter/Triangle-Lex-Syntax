@@ -1,0 +1,13 @@
+package myP ~
+	var a: Integer
+end
+! ; falta ;
+
+let
+	var b: Integer
+	
+in
+	b := myP $ a ! acceso cualificado
+end
+
+!Error: falta el ; después del end del package
