@@ -110,6 +110,10 @@ import Triangle.AbstractSyntaxTrees.PackageIdentifier;
 import Triangle.AbstractSyntaxTrees.PackageCallDeclaration;
 import Triangle.AbstractSyntaxTrees.PackageSequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.PackageEmptyDeclaration;
+
+//<Import Long Identifier>
+import Triangle.AbstractSyntaxTrees.LongIdentifier;
+
 /**
  * Implements the Triangle Visitor interface, which is used to
  * visit an entire AST. 
@@ -612,6 +616,14 @@ public class TableVisitor implements Visitor {
   // <editor-fold defaultstate="collapsed" desc=" Literals, Identifiers and Operators ">
   // Literals, Identifiers and Operators
   public Object visitCharacterLiteral(CharacterLiteral ast, Object o) {   
+      return(null);
+  }
+  
+  public Object visitLongIdentifier(LongIdentifier ast, Object o) {             
+      
+      ast.PI.visit(this, null);
+      ast.I.visit(this, null);
+      
       return(null);
   }
   

@@ -122,6 +122,7 @@ public interface Visitor {
 
   // Literals, Identifiers and Operators
   public abstract Object visitCharacterLiteral(CharacterLiteral ast, Object o);
+  public abstract Object visitLongIdentifier(LongIdentifier ast, Object o);
   public abstract Object visitIdentifier(Identifier ast, Object o);
   public abstract Object visitIntegerLiteral(IntegerLiteral ast, Object o);
   public abstract Object visitOperator(Operator ast, Object o);

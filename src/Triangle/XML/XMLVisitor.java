@@ -103,6 +103,9 @@ import Triangle.AbstractSyntaxTrees.PackageCallDeclaration;
 import Triangle.AbstractSyntaxTrees.PackageSequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.PackageEmptyDeclaration;
 
+//<Import Long Identifier>
+import Triangle.AbstractSyntaxTrees.LongIdentifier;
+
 /**
  *
  * @author zhong
@@ -444,6 +447,11 @@ public class XMLVisitor implements Visitor{
     public Object visitCharacterLiteral(CharacterLiteral ast, Object o) {
         return xmlNullary("CharacterLiteral " + ast.spelling);
     }
+    
+    public Object visitLongIdentifier(LongIdentifier ast, Object o) {             
+      
+      return(xmlBinary("LongIdentifier", ast.PI, ast.I));
+  }
 
     @Override
     public Object visitIdentifier(Identifier ast, Object o) {
