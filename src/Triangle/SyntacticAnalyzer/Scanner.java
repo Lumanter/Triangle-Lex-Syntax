@@ -159,6 +159,10 @@ public final class Scanner {
     case '|':
       takeIt();
       return Token.OR;
+      
+    case '$':
+      takeIt();
+      return Token.DOLAR;
 
     case '(':
       takeIt();
