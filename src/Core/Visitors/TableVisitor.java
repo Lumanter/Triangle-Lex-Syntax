@@ -104,6 +104,12 @@ import Triangle.CodeGenerator.UnknownRoutine;
 import Triangle.CodeGenerator.UnknownValue;
 import javax.swing.table.DefaultTableModel;
 
+//<Import Packages Clases>
+import Triangle.AbstractSyntaxTrees.PackageIdentifier;
+
+import Triangle.AbstractSyntaxTrees.PackageCallDeclaration;
+import Triangle.AbstractSyntaxTrees.PackageSequentialDeclaration;
+import Triangle.AbstractSyntaxTrees.PackageEmptyDeclaration;
 /**
  * Implements the Triangle Visitor interface, which is used to
  * visit an entire AST. 
@@ -118,6 +124,31 @@ public class TableVisitor implements Visitor {
     /** Creates a new instance of TableDetails */
     public TableVisitor() {        
     }
+    
+  //<editor-fold defaultstate="collapsed" desc=" Packages ">
+    public Object visitPackageIdentifier(PackageIdentifier ast, Object o) { 
+      ast.I.visit(this, null);
+      
+      return(null);
+    }
+    public Object visitPackageCallDeclaration(PackageCallDeclaration ast, Object o) { 
+      ast.PI.visit(this, null);
+      ast.D.visit(this, null);
+      
+      return(null);
+    }
+    public Object visitPackageSequentialDeclaration(PackageSequentialDeclaration ast, Object o) { 
+      ast.PD1.visit(this, null);
+      ast.PD2.visit(this, null);
+      
+      return(null);
+    }
+    public Object visitPackageEmptyDeclaration(PackageEmptyDeclaration ast, Object o) { 
+        
+      return(null);
+    }
+    
+    // </editor-fold>
 
   // <editor-fold defaultstate="collapsed" desc=" Commands ">
   // Commands

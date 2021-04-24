@@ -96,6 +96,12 @@ import Triangle.AbstractSyntaxTrees.VarFormalParameter;
 import Triangle.AbstractSyntaxTrees.Visitor;
 import Triangle.AbstractSyntaxTrees.VnameExpression;
 
+//<Import Packages Clases>
+import Triangle.AbstractSyntaxTrees.PackageIdentifier;
+
+import Triangle.AbstractSyntaxTrees.PackageCallDeclaration;
+import Triangle.AbstractSyntaxTrees.PackageSequentialDeclaration;
+import Triangle.AbstractSyntaxTrees.PackageEmptyDeclaration;
 
 /**
  *
@@ -106,6 +112,30 @@ public class XMLVisitor implements Visitor{
     public XMLVisitor(){
         
     }
+    
+    // <editor-fold defaultstate="collapsed" desc=" Packages "> 
+    
+    public Object visitPackageIdentifier(PackageIdentifier ast, Object o) { 
+      
+      return(xmlUnary("Package Identifier", ast.I));
+    }
+    
+    public Object visitPackageCallDeclaration(PackageCallDeclaration ast, Object o) { 
+      
+      return(xmlBinary("PackageCallDeclaration", ast.PI, ast.D));
+    }
+    
+    public Object visitPackageSequentialDeclaration(PackageSequentialDeclaration ast, Object o) { 
+      
+      return(xmlBinary("PackageSequentialDeclaration", ast.PD1, ast.PD2));
+    }
+    
+    public Object visitPackageEmptyDeclaration(PackageEmptyDeclaration ast, Object o) { 
+        
+      return(xmlNullary("PackageEmptyDeclaration"));
+    }
+    
+    // </editor-fold>
     
     @Override
     public Object visitAssignCommand(AssignCommand ast, Object o) {

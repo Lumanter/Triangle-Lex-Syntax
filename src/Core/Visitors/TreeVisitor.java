@@ -96,6 +96,13 @@ import Triangle.AbstractSyntaxTrees.Visitor;
 import Triangle.AbstractSyntaxTrees.VnameExpression;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+//<Import Packages Clases>
+import Triangle.AbstractSyntaxTrees.PackageIdentifier;
+
+import Triangle.AbstractSyntaxTrees.PackageCallDeclaration;
+import Triangle.AbstractSyntaxTrees.PackageSequentialDeclaration;
+import Triangle.AbstractSyntaxTrees.PackageEmptyDeclaration;
+
 /**
  * Implements the Triangle Visitor interface, which is used to
  * visit an entire AST. 
@@ -111,6 +118,30 @@ public class TreeVisitor implements Visitor {
      */
     public TreeVisitor() {
     }
+    
+    // <editor-fold defaultstate="collapsed" desc=" Packages "> 
+    
+    public Object visitPackageIdentifier(PackageIdentifier ast, Object o) { 
+      
+      return(createUnary("Package Identifier", ast.I));
+    }
+    
+    public Object visitPackageCallDeclaration(PackageCallDeclaration ast, Object o) { 
+      
+      return(createBinary("PackageCallDeclaration", ast.PI, ast.D));
+    }
+    
+    public Object visitPackageSequentialDeclaration(PackageSequentialDeclaration ast, Object o) { 
+      
+      return(createBinary("PackageSequentialDeclaration", ast.PD1, ast.PD2));
+    }
+    
+    public Object visitPackageEmptyDeclaration(PackageEmptyDeclaration ast, Object o) { 
+        
+      return(createNullary("PackageEmptyDeclaration"));
+    }
+    
+    // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc=" Commands ">    
     // Commands  
