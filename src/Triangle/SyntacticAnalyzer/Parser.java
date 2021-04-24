@@ -1557,7 +1557,7 @@ public class Parser {
 
     case Token.IDENTIFIER:
       {
-        Identifier iAST = parseIdentifier();
+        LongIdentifier iAST = parseLongIdentifier();
         finish(typePos);
         typeAST = new SimpleTypeDenoter(iAST, typePos);
       }
