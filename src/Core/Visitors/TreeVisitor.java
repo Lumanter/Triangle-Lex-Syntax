@@ -32,7 +32,6 @@ import Triangle.AbstractSyntaxTrees.CompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstActualParameter;
 import Triangle.AbstractSyntaxTrees.ConstDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstFormalParameter;
-import Triangle.AbstractSyntaxTrees.DotVname;
 import Triangle.AbstractSyntaxTrees.Elsif;
 import Triangle.AbstractSyntaxTrees.EmptyActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.EmptyCommand;
@@ -77,7 +76,6 @@ import Triangle.AbstractSyntaxTrees.RecursiveCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.SequentialCommand;
 import Triangle.AbstractSyntaxTrees.SequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
-import Triangle.AbstractSyntaxTrees.SimpleVname;
 import Triangle.AbstractSyntaxTrees.SingleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleArrayAggregate;
 import Triangle.AbstractSyntaxTrees.ElsifSequenceSingle;
@@ -85,7 +83,6 @@ import Triangle.AbstractSyntaxTrees.ProcFuncDeclaration;
 import Triangle.AbstractSyntaxTrees.SingleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
-import Triangle.AbstractSyntaxTrees.SubscriptVname;
 import Triangle.AbstractSyntaxTrees.TypeDeclaration;
 import Triangle.AbstractSyntaxTrees.UnaryExpression;
 import Triangle.AbstractSyntaxTrees.UnaryOperatorDeclaration;
@@ -106,6 +103,15 @@ import Triangle.AbstractSyntaxTrees.PackageEmptyDeclaration;
 
 //<Import Long Identifier>
 import Triangle.AbstractSyntaxTrees.LongIdentifier;
+
+//<Import Var-name>
+import Triangle.AbstractSyntaxTrees.Vname;
+
+import Triangle.AbstractSyntaxTrees.VarName;
+import Triangle.AbstractSyntaxTrees.SimpleVarName;
+import Triangle.AbstractSyntaxTrees.DotVarName;
+import Triangle.AbstractSyntaxTrees.SubscriptVarName;
+
 
 /**
  * Implements the Triangle Visitor interface, which is used to
@@ -527,16 +533,20 @@ public class TreeVisitor implements Visitor {
     
     // <editor-fold defaultstate="collapsed" desc=" Values or Variable Names ">
     // Values or Variable Names
-    public Object visitDotVname(DotVname ast, Object obj) {
-        return(createBinary("Dot Vname", ast.I, ast.V));
+    public Object visitVname(Vname ast, Object obj) {
+        return(createBinary("Vname", ast.PI, ast.VRN));
     }
     
-    public Object visitSimpleVname(SimpleVname ast, Object obj) {
-        return(createUnary("Simple Vname", ast.I));
+    public Object visitDotVarName(DotVarName ast, Object obj) {
+        return(createBinary("Dot VarName", ast.I, ast.V));
     }
     
-    public Object visitSubscriptVname(SubscriptVname ast, Object obj) {
-        return(createBinary("Subscript Vname", ast.V, ast.E));
+    public Object visitSimpleVarName(SimpleVarName ast, Object obj) {
+        return(createUnary("Simple VarName", ast.I));
+    }
+    
+    public Object visitSubscriptVarName(SubscriptVarName ast, Object obj) {
+        return(createBinary("Subscript VarName", ast.V, ast.E));
     }
     
     public Object visitProgram(Program ast, Object obj) {

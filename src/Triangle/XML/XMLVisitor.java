@@ -33,7 +33,6 @@ import Triangle.AbstractSyntaxTrees.CompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstActualParameter;
 import Triangle.AbstractSyntaxTrees.ConstDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstFormalParameter;
-import Triangle.AbstractSyntaxTrees.DotVname;
 import Triangle.AbstractSyntaxTrees.Elsif;
 import Triangle.AbstractSyntaxTrees.ElsifSequenceEmpty;
 import Triangle.AbstractSyntaxTrees.ElsifSequenceMultiple;
@@ -80,13 +79,11 @@ import Triangle.AbstractSyntaxTrees.RecursiveCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.SequentialCommand;
 import Triangle.AbstractSyntaxTrees.SequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
-import Triangle.AbstractSyntaxTrees.SimpleVname;
 import Triangle.AbstractSyntaxTrees.SingleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleArrayAggregate;
 import Triangle.AbstractSyntaxTrees.SingleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
-import Triangle.AbstractSyntaxTrees.SubscriptVname;
 import Triangle.AbstractSyntaxTrees.TypeDeclaration;
 import Triangle.AbstractSyntaxTrees.UnaryExpression;
 import Triangle.AbstractSyntaxTrees.UnaryOperatorDeclaration;
@@ -106,6 +103,15 @@ import Triangle.AbstractSyntaxTrees.PackageEmptyDeclaration;
 
 //<Import Long Identifier>
 import Triangle.AbstractSyntaxTrees.LongIdentifier;
+
+//<Import Var-name>
+import Triangle.AbstractSyntaxTrees.Vname;
+
+import Triangle.AbstractSyntaxTrees.VarName;
+import Triangle.AbstractSyntaxTrees.SimpleVarName;
+import Triangle.AbstractSyntaxTrees.DotVarName;
+import Triangle.AbstractSyntaxTrees.SubscriptVarName;
+
 
 /**
  *
@@ -477,18 +483,23 @@ public class XMLVisitor implements Visitor{
     
     //// Nombres de variables o valores
     @Override
-    public Object visitDotVname(DotVname ast, Object o) {
-        return xmlBinary("DotVname", ast.I, ast.V);
+    public Object visitVname(Vname ast, Object o) {
+        return xmlBinary("Vname", ast.PI, ast.VRN);
+    }
+    
+    @Override
+    public Object visitDotVarName(DotVarName ast, Object o) {
+        return xmlBinary("DotVarName", ast.I, ast.V);
     }
 
     @Override
-    public Object visitSimpleVname(SimpleVname ast, Object o) {
-        return xmlUnary("SimpleVname", ast.I);
+    public Object visitSimpleVarName(SimpleVarName ast, Object o) {
+        return xmlUnary("SimpleVarName", ast.I);
     }
 
     @Override
-    public Object visitSubscriptVname(SubscriptVname ast, Object o) {
-        return xmlBinary("SubscriptVname",ast.V, ast.E);
+    public Object visitSubscriptVarName(SubscriptVarName ast, Object o) {
+        return xmlBinary("SubscriptVarName",ast.V, ast.E);
     }
 
     ////Programa

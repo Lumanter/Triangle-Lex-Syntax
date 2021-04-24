@@ -47,7 +47,6 @@ import Triangle.AbstractSyntaxTrees.ConstActualParameter;
 import Triangle.AbstractSyntaxTrees.ConstDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstFormalParameter;
 import Triangle.AbstractSyntaxTrees.Declaration;
-import Triangle.AbstractSyntaxTrees.DotVname;
 import Triangle.AbstractSyntaxTrees.Elsif;
 import Triangle.AbstractSyntaxTrees.ElsifSequence;
 import Triangle.AbstractSyntaxTrees.EmptyActualParameterSequence;
@@ -95,7 +94,6 @@ import Triangle.AbstractSyntaxTrees.RecursiveCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.SequentialCommand;
 import Triangle.AbstractSyntaxTrees.SequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
-import Triangle.AbstractSyntaxTrees.SimpleVname;
 import Triangle.AbstractSyntaxTrees.SingleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleArrayAggregate;
 import Triangle.AbstractSyntaxTrees.ElsifSequenceSingle;
@@ -103,14 +101,12 @@ import Triangle.AbstractSyntaxTrees.ProcFuncDeclaration;
 import Triangle.AbstractSyntaxTrees.SingleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
-import Triangle.AbstractSyntaxTrees.SubscriptVname;
 import Triangle.AbstractSyntaxTrees.TypeDeclaration;
 import Triangle.AbstractSyntaxTrees.TypeDenoter;
 import Triangle.AbstractSyntaxTrees.UnaryExpression;
 import Triangle.AbstractSyntaxTrees.VarActualParameter;
 import Triangle.AbstractSyntaxTrees.VarDeclaration;
 import Triangle.AbstractSyntaxTrees.VarFormalParameter;
-import Triangle.AbstractSyntaxTrees.Vname;
 import Triangle.AbstractSyntaxTrees.VnameExpression;
 
 //<Import Packages Clases>
@@ -125,6 +121,15 @@ import Triangle.AbstractSyntaxTrees.PackageEmptyDeclaration;
 
 //<Import Long Identifier>
 import Triangle.AbstractSyntaxTrees.LongIdentifier;
+
+//<Import Var-name>
+import Triangle.AbstractSyntaxTrees.Vname;
+
+import Triangle.AbstractSyntaxTrees.VarName;
+import Triangle.AbstractSyntaxTrees.SimpleVarName;
+import Triangle.AbstractSyntaxTrees.DotVarName;
+import Triangle.AbstractSyntaxTrees.SubscriptVarName;
+
 
 
 public class Parser {
@@ -1066,18 +1071,65 @@ public class Parser {
 // VALUE-OR-VARIABLE NAMES
 //
 ///////////////////////////////////////////////////////////////////////////////
-  // <editor-fold defaultstate="collapsed" desc=" Value-or-Variable Names ">   
-  Vname parseVname () throws SyntaxError {
-    Vname vnameAST = null; // in case there's a syntactic error
+  // <editor-fold defaultstate="collapsed" desc=" Value-or-Variable Names "> 
+
+  Vname parseVname() throws SyntaxError{
+      
+      //Init Vname AST
+      Vname vnameAST = null;
+      
+      //Parse Productions
+      Identifier tempIdentifierAST = parseIdentifier();
+      
+      vnameAST = parseRestOfVname(tempIdentifierAST);
+      
+      //Return Vname AST
+      return vnameAST;
+  }
+  
+  Vname parseRestOfVname(Identifier tempIdentifierAST) throws SyntaxError{
+      
+      //Init Vname AST
+      Vname vnameAST = null;
+      //Start Position Counting
+      SourcePosition vnamePosition = new SourcePosition();
+      vnamePosition = tempIdentifierAST.position;
+      
+      //Parse Productions
+      if(currentToken.kind == Token.DOLAR){
+          
+          acceptIt();
+          PackageIdentifier packageIdentifierAST = new PackageIdentifierSimple(tempIdentifierAST, vnamePosition);
+          VarName varnameAST = parseVarName();
+          
+          //Create Vname AST
+          vnameAST = new Vname(packageIdentifierAST, varnameAST, vnamePosition);
+          
+      }else{
+          
+          VarName tempVarnameAST = parseRestOfVarName(tempIdentifierAST);
+          PackageIdentifier tempPackageIdentifierAST = new PackageIdentifierEmpty(vnamePosition);
+          
+          //Create Vname AST
+          vnameAST = new Vname(tempPackageIdentifierAST, tempVarnameAST, vnamePosition);
+      }
+      
+      return vnameAST;
+      
+  }
+  
+  
+  VarName parseVarName() throws SyntaxError {
+    VarName vnameAST = null; // in case there's a syntactic error
     Identifier iAST = parseIdentifier();
-    vnameAST = parseRestOfVname(iAST);
+    vnameAST = parseRestOfVarName(iAST);
     return vnameAST;
   }
 
-  Vname parseRestOfVname(Identifier identifierAST) throws SyntaxError {
+  VarName parseRestOfVarName(Identifier identifierAST) throws SyntaxError {
     SourcePosition vnamePos = new SourcePosition();
     vnamePos = identifierAST.position;
-    Vname vAST = new SimpleVname(identifierAST, vnamePos);
+    VarName vAST = new SimpleVarName(identifierAST, vnamePos);
 
     while (currentToken.kind == Token.DOT ||
            currentToken.kind == Token.LBRACKET) {
@@ -1085,13 +1137,13 @@ public class Parser {
       if (currentToken.kind == Token.DOT) {
         acceptIt();
         Identifier iAST = parseIdentifier();
-        vAST = new DotVname(vAST, iAST, vnamePos);
+        vAST = new DotVarName(vAST, iAST, vnamePos);
       } else {
         acceptIt();
         Expression eAST = parseExpression();
         accept(Token.RBRACKET);
         finish(vnamePos);
-        vAST = new SubscriptVname(vAST, eAST, vnamePos);
+        vAST = new SubscriptVarName(vAST, eAST, vnamePos);
       }
     }
     return vAST;

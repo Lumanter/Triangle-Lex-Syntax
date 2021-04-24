@@ -32,7 +32,6 @@ import Triangle.AbstractSyntaxTrees.CompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstActualParameter;
 import Triangle.AbstractSyntaxTrees.ConstDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstFormalParameter;
-import Triangle.AbstractSyntaxTrees.DotVname;
 import Triangle.AbstractSyntaxTrees.Elsif;
 import Triangle.AbstractSyntaxTrees.EmptyActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.EmptyCommand;
@@ -77,7 +76,6 @@ import Triangle.AbstractSyntaxTrees.RecursiveCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.SequentialCommand;
 import Triangle.AbstractSyntaxTrees.SequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
-import Triangle.AbstractSyntaxTrees.SimpleVname;
 import Triangle.AbstractSyntaxTrees.SingleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleArrayAggregate;
 import Triangle.AbstractSyntaxTrees.ElsifSequenceSingle;
@@ -85,7 +83,6 @@ import Triangle.AbstractSyntaxTrees.ProcFuncDeclaration;
 import Triangle.AbstractSyntaxTrees.SingleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
-import Triangle.AbstractSyntaxTrees.SubscriptVname;
 import Triangle.AbstractSyntaxTrees.TypeDeclaration;
 import Triangle.AbstractSyntaxTrees.UnaryExpression;
 import Triangle.AbstractSyntaxTrees.UnaryOperatorDeclaration;
@@ -114,6 +111,15 @@ import Triangle.AbstractSyntaxTrees.PackageEmptyDeclaration;
 
 //<Import Long Identifier>
 import Triangle.AbstractSyntaxTrees.LongIdentifier;
+
+//<Import Var-name>
+import Triangle.AbstractSyntaxTrees.Vname;
+
+import Triangle.AbstractSyntaxTrees.VarName;
+import Triangle.AbstractSyntaxTrees.SimpleVarName;
+import Triangle.AbstractSyntaxTrees.DotVarName;
+import Triangle.AbstractSyntaxTrees.SubscriptVarName;
+
 
 /**
  * Implements the Triangle Visitor interface, which is used to
@@ -651,20 +657,27 @@ public class TableVisitor implements Visitor {
 
   // <editor-fold defaultstate="collapsed" desc=" Values or Variable Names ">
   // Value-or-variable names
-  public Object visitDotVname(DotVname ast, Object o) { 
+  public Object visitVname(Vname ast, Object o) { 
+      ast.PI.visit(this, null);
+      ast.VRN.visit(this, null);
+  
+      return(null);
+  }
+  
+  public Object visitDotVarName(DotVarName ast, Object o) { 
       ast.I.visit(this, null);
       ast.V.visit(this, null);
   
       return(null);
   }
   
-  public Object visitSimpleVname(SimpleVname ast, Object o) { 
+  public Object visitSimpleVarName(SimpleVarName ast, Object o) { 
       ast.I.visit(this, null);
   
       return(null);
   }
   
-  public Object visitSubscriptVname(SubscriptVname ast, Object o) { 
+  public Object visitSubscriptVarName(SubscriptVarName ast, Object o) { 
       ast.E.visit(this, null);
       ast.V.visit(this, null);
   
