@@ -1,6 +1,11 @@
-let 
-	var x:int;
-	private const c~1 in const d~2 end;
-in 
-	x := x + y
+let 
+
+	var x:int;
+
+	private const c~1 in const d~2 end
+
+in 
+
+	x := x + y
+
 end
