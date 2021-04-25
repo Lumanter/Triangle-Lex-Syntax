@@ -127,12 +127,12 @@ public class XMLVisitor implements Visitor{
     
     public Object visitPackageIdentifierSimple(PackageIdentifierSimple ast, Object o) { 
       
-      return(xmlUnary("Package Identifier", ast.I));
+      return(xmlUnary("PackageIdentifierSimple", ast.I));
     }
     
     public Object visitPackageIdentifierEmpty(PackageIdentifierEmpty ast, Object o) { 
       
-      return(xmlNullary("Package Identifier"));
+      return(xmlNullary("PackageIdentifierEmpty"));
     }
     
     public Object visitPackageCallDeclaration(PackageCallDeclaration ast, Object o) { 
@@ -467,7 +467,7 @@ public class XMLVisitor implements Visitor{
 
     @Override
     public Object visitIdentifier(Identifier ast, Object o) {
-        return xmlNullary("Identifer " + ast.spelling);
+        return xmlNullary("Identifier " + ast.spelling);
     }
 
     @Override
