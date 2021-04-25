@@ -133,27 +133,27 @@ public class TreeVisitor implements Visitor {
     
     public Object visitPackageIdentifierSimple(PackageIdentifierSimple ast, Object o) { 
       
-      return(createUnary("Package Identifier", ast.I));
+      return(createUnary("Package Identifier Simple", ast.I));
     }
     
     public Object visitPackageIdentifierEmpty(PackageIdentifierEmpty ast, Object o) { 
       
-      return(createNullary("Package Identifier"));
+      return(createNullary("Package Identifier Empty"));
     }
     
     public Object visitPackageCallDeclaration(PackageCallDeclaration ast, Object o) { 
       
-      return(createBinary("PackageCallDeclaration", ast.PI, ast.D));
+      return(createBinary("Package Call Declaration", ast.PI, ast.D));
     }
     
     public Object visitPackageSequentialDeclaration(PackageSequentialDeclaration ast, Object o) { 
       
-      return(createBinary("PackageSequentialDeclaration", ast.PD1, ast.PD2));
+      return(createBinary("Package Sequential Declaration", ast.PD1, ast.PD2));
     }
     
     public Object visitPackageEmptyDeclaration(PackageEmptyDeclaration ast, Object o) { 
         
-      return(createNullary("PackageEmptyDeclaration"));
+      return(createNullary("Package Empty Declaration"));
     }
     
     // </editor-fold>

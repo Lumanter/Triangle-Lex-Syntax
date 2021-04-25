@@ -44,7 +44,7 @@ import Triangle.AbstractSyntaxTrees.CompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstActualParameter;
 import Triangle.AbstractSyntaxTrees.ConstDeclaration;
 import Triangle.AbstractSyntaxTrees.ConstFormalParameter;
-import Triangle.AbstractSyntaxTrees.DotVname;
+import Triangle.AbstractSyntaxTrees.DotVarName;
 import Triangle.AbstractSyntaxTrees.Elsif;
 import Triangle.AbstractSyntaxTrees.EmptyActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.EmptyCommand;
@@ -89,15 +89,21 @@ import Triangle.AbstractSyntaxTrees.RecursiveCompoundDeclaration;
 import Triangle.AbstractSyntaxTrees.SequentialCommand;
 import Triangle.AbstractSyntaxTrees.SequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.SimpleTypeDenoter;
-import Triangle.AbstractSyntaxTrees.SimpleVname;
+import Triangle.AbstractSyntaxTrees.SimpleVarName;
 import Triangle.AbstractSyntaxTrees.SingleActualParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleArrayAggregate;
 import Triangle.AbstractSyntaxTrees.ElsifSequenceSingle;
+import Triangle.AbstractSyntaxTrees.LongIdentifier;
+import Triangle.AbstractSyntaxTrees.PackageCallDeclaration;
+import Triangle.AbstractSyntaxTrees.PackageEmptyDeclaration;
+import Triangle.AbstractSyntaxTrees.PackageIdentifierEmpty;
+import Triangle.AbstractSyntaxTrees.PackageIdentifierSimple;
+import Triangle.AbstractSyntaxTrees.PackageSequentialDeclaration;
 import Triangle.AbstractSyntaxTrees.ProcFuncDeclaration;
 import Triangle.AbstractSyntaxTrees.SingleFieldTypeDenoter;
 import Triangle.AbstractSyntaxTrees.SingleFormalParameterSequence;
 import Triangle.AbstractSyntaxTrees.SingleRecordAggregate;
-import Triangle.AbstractSyntaxTrees.SubscriptVname;
+import Triangle.AbstractSyntaxTrees.SubscriptVarName;
 import Triangle.AbstractSyntaxTrees.TypeDeclaration;
 import Triangle.AbstractSyntaxTrees.UnaryExpression;
 import Triangle.AbstractSyntaxTrees.UnaryOperatorDeclaration;
@@ -105,6 +111,7 @@ import Triangle.AbstractSyntaxTrees.VarActualParameter;
 import Triangle.AbstractSyntaxTrees.VarDeclaration;
 import Triangle.AbstractSyntaxTrees.VarFormalParameter;
 import Triangle.AbstractSyntaxTrees.Visitor;
+import Triangle.AbstractSyntaxTrees.Vname;
 import Triangle.AbstractSyntaxTrees.VnameExpression;
 
 
@@ -423,16 +430,16 @@ public class LayoutVisitor implements Visitor {
 
 
   // Value-or-variable names
-  public Object visitDotVname(DotVname ast, Object obj) {
-    return layoutBinary("DotVname", ast.I, ast.V);
+  public Object visitDotVname(DotVarName ast, Object obj) {
+    return layoutBinary("DotVarName", ast.I, ast.V);
   }
 
-  public Object visitSimpleVname(SimpleVname ast, Object obj) {
-    return layoutUnary("Sim.Vname", ast.I);
+  public Object visitSimpleVname(SimpleVarName ast, Object obj) {
+    return layoutUnary("Sim.VarName", ast.I);
   }
 
-  public Object visitSubscriptVname(SubscriptVname ast, Object obj) {
-    return layoutBinary("Sub.Vname",
+  public Object visitSubscriptVname(SubscriptVarName ast, Object obj) {
+    return layoutBinary("Sub.VarName",
         ast.V, ast.E);
   }
 
@@ -693,5 +700,55 @@ public class LayoutVisitor implements Visitor {
     @Override
     public Object visitProcFuncDeclaration(ProcFuncDeclaration aThis, Object o) {
         return layoutNullary("Proc.Func.Decl.");
+    }
+
+    @Override
+    public Object visitPackageIdentifierSimple(PackageIdentifierSimple ast, Object o) {
+        return layoutUnary("Pack.Ident.Simp.",ast.I);
+    }
+
+    @Override
+    public Object visitPackageIdentifierEmpty(PackageIdentifierEmpty ast, Object o) {
+        return layoutNullary("Pack.Ident.Emp.");
+    }
+
+    @Override
+    public Object visitPackageCallDeclaration(PackageCallDeclaration ast, Object o) {
+        return layoutBinary("Pack.CallDecl.", ast.PI, ast.D);
+    }
+
+    @Override
+    public Object visitPackageSequentialDeclaration(PackageSequentialDeclaration ast, Object o) {
+        return layoutBinary("Pack.Seq.Decl.", ast.PD1, ast.PD2);
+    }
+
+    @Override
+    public Object visitPackageEmptyDeclaration(PackageEmptyDeclaration ast, Object o) {
+        return layoutNullary("Pack.Empt.Decl.");
+    }
+
+    @Override
+    public Object visitLongIdentifier(LongIdentifier ast, Object o) {
+        return layoutBinary("LongIdent.", ast.PI, ast.I);
+    }
+
+    @Override
+    public Object visitVname(Vname ast, Object o) {
+        return layoutBinary("Vname", ast.PI, ast.VRN);
+    }
+
+    @Override
+    public Object visitDotVarName(DotVarName ast, Object o) {
+        return layoutBinary("DotVar.Name", ast.I, ast.V);
+    }
+
+    @Override
+    public Object visitSimpleVarName(SimpleVarName ast, Object o) {
+        return layoutUnary("Simp.Var.Name", ast.I);
+    }
+
+    @Override
+    public Object visitSubscriptVarName(SubscriptVarName ast, Object o) {
+        return layoutBinary("Subs.Var.Name",ast.V, ast.E);
     }
 }
